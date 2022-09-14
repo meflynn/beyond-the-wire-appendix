@@ -1,5 +1,5 @@
 
-# Summary {-}
+# Summary 
 
 This bookdown project contains additional supplementary information for the contents of our book, Beyond the Wire: US Military Deployments and the Diplomacy of Defense. The materials contained within include additional information on surveys, tables for the models presented in the book, additional figures, code for figures and tables, etc.
 
