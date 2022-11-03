@@ -18,6 +18,9 @@ fig:posterior-check-crime-people
 tab:individual-level-summary-table
 introduction
 contact-benefits
+survey-information
+dependent-variables
+independent-variables
 descriptive-information
 supplemental-information-on-models
 variables-and-model-specifications

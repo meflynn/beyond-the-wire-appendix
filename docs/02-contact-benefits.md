@@ -5,6 +5,256 @@ This chapter contains supplementary information on the chapter exploring how con
 
 
 
+## Survey Information
+
+1 - Country Abbreviation (iso3c)
+  Uses the ISO3C abbreviation format.
+  Values:
+    AUS - Australia BEL - Belgium GMY - Germany ITA - Italy
+    JPN - Japan
+    KUW - Kuwait
+    NTH - Netherlands
+    PHI - Philippines
+    POL - Poland
+    POR - Portugal
+    ROK - South Korea SPN - Spain
+    TUR - Turkey
+    UKG - United Kingdom
+    
+2 - Language
+  The language the respondent took the survey in.
+  Values:
+    1 - English 2 - Dutch
+    3 - French
+    4 - German 5 - Italian
+    6 - Japanese 7 - Arabic
+    8 - Tagalog
+    9 - Polish
+    10 - Portuguese 11 - Korean
+    12 - Spanish
+    13 - Turkish
+    
+### Dependent Variables
+
+This subsection shows the available responses for the three questions that serve as the basis for our dependent variables. Please note that we recode these variables when we estimate our categorical logit models. For our primary models we collapse the six original categories down into four: 1) Positive views, 2) Negative views, 3) Neutral views, and 4) Don’t know/Decline to answer. This approach has a couple of advantages. First, while we prefer to collect data at a fine-grained level, we have little empirical or theoretical basis for evaluating the substantive difference between the "Somewhat" and "Very" categories. However, there is a clearer and more meaningful distinction between positive and negative views. Second, the simpler saves us a considerable amount of time given the computational intensity of the multilevel categorical models, which we discuss more below.
+
+3 - Question: US Military Presence (troops_1)
+"In general, what is your opinion of the presence of American military forces in (respondent’s country)?"
+  Values:
+    1 - Don’t know/decline to answer 2 - Very favorable
+    3 - Somewhat favorable
+    4 - Neutral
+    5 - Somewhat unfavorable 6 - Very unfavorable
+
+
+4 - Question: American Government (american_gov)
+  "In general, what is your opinion of the American government?"
+  Values:
+    1 - Don’t know/decline to answer 2 - Very favorable
+    3 - Somewhat favorable
+    4 - Neutral
+    5 - Somewhat unfavorable 6 - Very unfavorable
+
+
+5 - Question: American People (american_people)
+  "In general, what is your opinion of the American people?"
+  Values:
+    1 - Don’t know/decline to answer
+    2 - Very favorable
+    3 - Somewhat favorable
+    4 - Neutral
+    5 - Somewhat unfavorable
+    6 - Very unfavorable
+    
+    
+
+### Independent Variables
+
+These variables represent either data coded automatically by our survey services or questions we asked the respondents. Note that almost all of these variables are treated as categorical/factor variables when estimating the models, and that the category numbers do not denote treatment as a continuous measure.
+
+
+6 - Question: Direct Contact with US Military (contact_pers)
+"Have you personally had direct contact with a member of the American military in (respondent’s country)?"
+  Values:
+    1 - Yes
+    2 - No
+    3 - Don’t know/Decline to answer
+
+
+7 - Question: Family Contact with US Military (contact_nonpers)
+"Has a member of your family or close friend had direct contact with a member of the American military stationed in (respondent’s country)?"
+  Values:
+    1 - Yes
+    2 - No
+    3 - Don’t know/Decline to answer
+
+
+8 - Question: Economic benefit US Military (benefit_pers)
+"Have you personally received a direct economic benefit from the American military presence in (respondent’s country)? Examples include employment by the US military, employment by a con- tractor that does business with the US military, or ownership/employment at a business that frequently serves US military personnel."
+  Values:
+    1 - Yes
+    2 - No
+    3 - Don’t know/Decline to answer
+
+
+9 - Question: Family Economic Benefit US Military (benefit_nonpers)
+"Has a member of your family or close friend received a direct economic benefit from the American military presence in (respondent’s country)? Examples include employment by the US military, employment by a contractor that does business with the US military, or ownership/employment at a business that frequently serves US military personnel."
+  
+  Values:
+  
+    1 - Yes
+    2 - No
+    3 - Don’t know/Decline to answer
+
+10 - Question: Gender
+What is your gender?
+  
+  Values:
+  
+    1 - Male
+    2 - Female
+    3 - Non-binary
+    4 - None of the above
+
+
+11 - Question: Minority
+Do you identify as a racial, ethnic, or religious minority?
+  Values:
+    1 - Yes
+    2 - No
+    3 - Decline to Answer
+    
+12 - Question: Education
+How many years of formal education have you completed? Values: 0-99999
+*Note: Given a number of extreme outliers resulting from the open form/self-coding process we used in our surveys, we truncate the education variable at 25 years when we estimate our models to eliminate extreme outliers. This covers up to 9 years of graduate education.*
+
+13 - Question: Age
+What is your age? Values: 0-99999
+
+14 - Question: Income - Schmeidl (incomesm)
+What is your total household income during the past 12 months?
+This question had six response categories for each of the six countries, which is the following. All categories are combined as 1-6 in the data. We recommend combining categories 5 and 6 to repre- sent the upper income bracket to match the quintile distributions from the Qualtrics survey. 
+  Values:
+    1 - Bottom Bracket 
+    2 - 2nd Bracket
+    3 - 3rd Bracket
+    4 - 4th Bracket
+    5 - 5th Bracket 
+    6 - Top Bracket
+
+United Kingdom:
+1 - <£20,000
+2 - £20,000 - <£35,000 
+3 - £35,000 - <£50,000 
+4 - £50,000 - <£75,000 
+5 - £75,000 - <£100,000 
+6 - >£100,000
+
+Germany:
+1 - <20.000e
+2 - 20.000e - 29.999e 
+3 - 30.000e - 39.999e 
+4 - 40.000e - 49.999e 
+5 - 50.000e - 59.000e 
+6 - >60.000e
+
+Italy:
+1 - <20.000e
+2 - 20.000e - 29.999e 
+3 - 30.000e - 39.999e 
+4 - 40.000e - 49.999e 
+5 - 50.000e - 59.000e 
+6 - >60.000e
+
+Kuwait:
+1 - <3000 KWD
+2 - 3 000 - less than 6 000 KWD
+3 - 6 000 - less than 12 000 KWD 
+4 - 12 000 - less than 18 000 KWD 
+5 - 18 000 - less than 24000 KWD 
+6 - >24000 KWD
+
+Japan:
+1 - <2 million yen
+2 - 2 million yen - less than 4 million yen
+3 - 4 million yen - less than 7 million yen
+4 - 7 million yen - less than 10 million yen 
+5 - 10 million yen - less than 15 million yen 
+6 - >15 million yen
+
+South Korea
+1 - <25 million KRW
+2 - 25 million - less than 35 million KRW 
+3 - 35 million - less than 45 million KRW 
+4 - 45 million - less than 60 million KRW 
+5 - 60 million - less than 80 million KRW 
+6 - >80 million KRW
+
+15 - Question: Religion
+What is your religion, if any?
+  Values:
+    1 - Christianity (Protestant) 2 - Catholicism
+    3 - Islam
+    4 - Agnostic/Atheist
+    5 - Hinduism 6 - Buddhism 7 - Shinto
+    8 - Judaism
+    9 - Mormonism 10 - Local religion
+
+11 - Other:
+12 - Decline to Answer
+
+
+16 - Question: Religion Other (religionother)
+Open text responses for the Other bracket option in the previous question. Value Range: Free-form text.
+
+
+17 - Question: Political Views (ideology)
+"People often talk about political issues and views in terms of a "left" and "right" spectrum. Using the following scale, where would you place yourself in terms of political views?"
+  Values:
+    1 - 1 - LEFT 2-2
+    3-3
+    4-4
+    5-5
+    6-6
+    7-7
+    8-8
+    9-9
+    10 - 10 - RIGHT
+
+
+18 - Question: Favor Democracy (demgov)
+"In general, how important is it to you that you live under a democratic government?"
+  Values:
+    1 - Very important
+    2 - Somewhat important
+    3 - Neutral
+    4 - Not important
+    5 - Don’t know/decline to answer
+
+
+19 - Question: US Influence (Amount) (american_inf_1)
+" In your opinion, how much influence does the United States have in (respondent’s country)?"
+  Values:
+    1 - A lot
+    2 - Some
+    3 - A little
+    4 - None
+    5 - Don’t know/Decline to answer
+
+
+20 - Question: US Influence (Quality) (american_inf_2)
+"In your opinion, the influence that the United States has in (respondent’s country) is. . . "
+  Values:
+    1 - Very positive 
+    2 - Positive
+    3 - Neither Positive nor Negative 4 - Negative
+    5 - Very Negative
+    6 - Don’t know/Decline to answer
+
+
+
+
+
 ## Descriptive Information
 
 
