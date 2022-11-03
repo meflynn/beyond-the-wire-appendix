@@ -1,0 +1,200 @@
+# US Military Deployments and Minority Communities
+
+This chapter provides supplementary information related to Chapter 4 of the book, focusing on how US military deployments interact with and are viewed by minority communities. 
+
+
+```{r setup, warning=FALSE, message=FALSE, echo=FALSE}
+library(tidyverse)
+library(tidyr)
+library(data.table)
+library(job)
+library(broom)
+library(broom.mixed)
+library(modelr)
+library(cshapes)
+library(countrycode)
+library(dagitty)
+library(ggdag)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(arm)
+library(brms)
+library(rstan)
+library(cmdstanr)
+library(parallel)
+library(tidybayes)
+library(scales)
+library(ggdist)
+library(ggh4x)
+#library(ggtrack)
+library(viridis)
+library(kableExtra)
+library(BayesPostEst)
+library(texreg)
+library(modelsummary)
+library(gt)
+library(webshot)
+library(kableExtra)
+library(ggExtra)
+library(ggrepel)
+library(ggmcmc)
+library(ggpubr)
+library(ggtext)
+library(patchwork)
+library(here)
+library(performance)
+library(tictoc)
+library(sysfonts)
+library(remotes)
+library(formattable)
+library(sparkline)
+library(ltxsparklines)
+
+
+knitr::opts_chunk$set(comment = '', dpi = 400, warning = FALSE, echo = FALSE, message = FALSE)
+
+sysfonts::font_add_google("Oswald", family = "oswald")
+showtext::showtext_auto()
+
+# Set basesize for fonts in plots
+basesize <- 11
+
+
+# Regular plot theme
+theme_flynn <- function(){ 
+  
+      theme_linedraw(base_size = basesize, base_family = "oswald") %+replace% 
+        
+        theme(plot.title = element_text(face = "bold", size = basesize * 1.3, hjust = 0, margin = margin(t = 0, b = 0.3, l = 0, r = 0, unit = "cm")),
+              plot.subtitle = element_text(size = basesize),
+              plot.caption = element_text(face = "italic", size = basesize * 0.6),
+              panel.border = element_rect(fill = NA, size = 0.2),
+              strip.background = element_rect(fill = "gray80", color = "black", size = 0.2),
+              strip.text = element_text(size = basesize, color = "black", face = "bold", margin = margin(t = 0.2, b = 0.2, l = 0.2, r = 0.2, unit = "cm")),
+              panel.background = element_rect(size = 0.2),
+              panel.grid.major = element_line(color = "gray70", size = 0.15),
+              panel.grid.minor = element_line(color = "gray90", size = 0.1),
+              axis.title = element_text(face = "bold", size = basesize),
+              axis.title.y = element_text(angle = 90, margin = margin(t = 0, r = 0.5, b = 0, l = 0, unit = "cm")),
+              axis.title.x = element_text(margin = margin(t = 0.5, r = 0, b = 0, l = 0, unit = "cm")),
+              axis.ticks = element_line(size = 0.1),
+              axis.ticks.length = unit(0.1, "cm"),
+              legend.title = element_text(size = basesize, face = "bold", hjust = 0, margin = margin(t = 0, b = 0, l = 0, r = 0, unit = "cm")),
+              plot.margin = margin(0.5, 0.5, 0.5, 0.5, unit = "cm"),
+              legend.margin = margin(t=-10, b=0, r=0, l=0),
+              legend.box.margin = margin(-10,-10,-10,-10))
+  }
+
+# Map version of theme
+theme_flynn_map <- function(){
+  
+  theme_void(base_family = "oswald") %+replace% 
+    
+    theme(plot.title = element_text(face = "bold", size = 18, hjust = 0, margin = margin(t = 0, b = 0.3, l = 0, r = 0, unit = "cm")),
+          plot.subtitle = element_text(size = 12, hjust = 0, margin = margin(t = 0, b = 0.3, l = 0, r = 0, unit = "cm")),
+          plot.caption = element_text(face = "italic", size = 8, hjust = 1, margin = margin(t = 0.2, unit = "cm")),
+          strip.background = element_rect(fill = "gray80", color = "black"),
+          strip.text = element_text(color = "black", face = "bold"),
+          panel.grid.major = element_line(color = "white", size = 0),
+          panel.grid.minor = element_line(color = "white", size = 0),
+          #axis.title = element_text(face = "bold", size = 0),
+          #axis.title.y = element_text(margin = margin(t = 0, r = 0.5, b = 0, l = 0, unit = "cm")),
+          #axis.title.x = element_text(margin = margin(t = 0.5, r = 0, b = 0, l = 0, unit = "cm")),
+          legend.title = element_text(face = "bold"),
+          legend.position = "bottom",
+          legend.key.height = unit(0.6, "cm"),
+          legend.key.width = unit(2.5, "cm"))
+}
+
+
+ccode.list <- c("200", "210", "211", "230", "235", "255", "290", "325", "640", "690", "732", "740", "840", "900")
+
+
+### Stan Setup ####
+
+# Conflicted pckage really fucks things up
+if(any(grepl("package:conflicted", search()))) detach("package:conflicted") else message("package conflicted not loaded")
+
+
+# Parallelize machine
+options(mc.cores = parallel::detectCores())
+ncores <- parallel::detectCores()
+rstan_options(auto_write = TRUE)
+
+
+# Load opinion data for individual-level protest models.
+load(here::here("../Book/Data/General", "opinion.data.RData")) 
+
+# This fixes an encoding issue which duplicated the "Other" category unnecessarily. 
+o.data <- setDT(o.data)[
+  , relig := ifelse(grepl("Other", relig), "Other", relig)
+]
+
+set.seed(seed = 66502)
+
+
+# Load model files because bookdown doesn't like something about reading the brms rds files in.
+
+# Bivariate models for illustrative purposes
+m.t1 <- readRDS(here::here("../Book/Output/Chapter-Minority/m.t1.rds"))
+m.g1 <- readRDS(here::here("../Book/Output/Chapter-Minority/m.g1.rds"))
+m.p1 <- readRDS(here::here("../Book/Output/Chapter-Minority/m.p1.rds"))
+
+# Full models
+m.t2 <- readRDS(here::here("../Book/Output/Chapter-Minority/m.t2.rds"))
+m.g2 <- readRDS(here::here("../Book/Output/Chapter-Minority/m.g2.rds"))
+m.p2 <- readRDS(here::here("../Book/Output/Chapter-Minority/m.p2.rds"))
+
+# Models focusing on Japan
+m.t2.japan <- readRDS(here::here("../Book/Output/Chapter-Minority/m.t2.japan.rds"))
+m.g2.japan <- readRDS(here::here("../Book/Output/Chapter-Minority/m.g2.japan.rds"))
+m.p2.japan <- readRDS(here::here("../Book/Output/Chapter-Minority/m.p2.japan.rds"))
+
+m.t3 <- readRDS(here::here("../Book/Output/Chapter-Minority/m.t3.rds"))
+m.g3 <- readRDS(here::here("../Book/Output/Chapter-Minority/m.g3.rds"))
+m.p3 <- readRDS(here::here("../Book/Output/Chapter-Minority/m.p3.rds"))
+
+m.t4 <- readRDS(here::here("../Book/Output/Chapter-Minority/m.t4.rds"))
+m.g4 <- readRDS(here::here("../Book/Output/Chapter-Minority/m.g4.rds"))
+m.p4 <- readRDS(here::here("../Book/Output/Chapter-Minority/m.p4.rds"))
+
+m.t4.japan <- readRDS(here::here("../Book/Output/Chapter-Minority/m.t4.japan.rds"))
+m.g4.japan <- readRDS(here::here("../Book/Output/Chapter-Minority/m.g4.japan.rds"))
+m.p4.japan <- readRDS(here::here("../Book/Output/Chapter-Minority/m.p4.japan.rds"))
+
+priors.t <- brms::prior_summary(m.t1) 
+priors.g <- brms::prior_summary(m.g1)
+priors.p <- brms::prior_summary(m.p1)
+
+```
+
+
+## Descriptive Information
+
+```{r minority-description, echo=FALSE, warning=FALSE, message=FALSE}
+
+# Minorities as a percent of the sample by year
+minperc <- o.data %>% 
+  group_by(country, year) %>% 
+  mutate(minority.yes = ifelse(minority == "Yes", 1, 0),
+         groupobs = n_distinct(X1)) %>% 
+  dplyr::summarise(minority = sum(minority.yes, na.rm = TRUE),
+            obs = mean(groupobs, na.rm = TRUE)) %>% 
+  mutate(min.per = minority/obs) %>% 
+  filter(!is.na(country))
+
+ggplot(minperc, aes(y = factor(year), x = min.per, color = country)) +
+  geom_text(aes(label = country), position = position_jitter(height = 0.4), size = 2.5) +
+  theme_flynn() +
+  scale_x_continuous(labels = scales::percent_format()) +
+  guides(color = FALSE) +
+  theme(plot.title.position = "plot") +
+  labs(x = "Percent",
+       y = "Year",
+       color = "Country",
+       title = "Self-identified minority group members as percent of country sample")
+
+```
+
+

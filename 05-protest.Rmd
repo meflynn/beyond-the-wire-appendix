@@ -1,0 +1,413 @@
+# Deployments and Protest Activity
+
+```{r setup , echo = FALSE, include = FALSE}
+
+#devtools::install_github("lindeloev/job")
+
+library(tidyverse)
+library(tidyr)
+library(job)
+library(broom)
+library(broom.mixed)
+library(psych)
+#library(ipw)
+library(modelr)
+library(cshapes)
+library(countrycode)
+library(dagitty)
+library(ggdag)
+library(arm)
+library(brms)
+library(rstan)
+library(cmdstanr)
+library(parallel)
+library(tidybayes)
+library(scales)
+library(ggdist)
+library(kableExtra)
+library(BayesPostEst)
+library(texreg)
+library(modelsummary)
+library(gt)
+library(webshot)
+library(kableExtra)
+library(ggExtra)
+library(ggmcmc)
+library(ggpubr)
+library(patchwork)
+library(here)
+library(arm)
+library(performance)
+#library(ROCR)
+library(tictoc)
+library(remotes)
+
+#devtools::install_github('tidyss/rroughviz')
+#devtools::install_github("xvrdm/ggrough")
+#library(ggrough)
+#library(rroughviz)
+
+#remotes::install_github('vincentarelbundock/modelsummary') 
+
+# Test
+library(modelsummary)
+
+knitr::opts_chunk$set(comment = '', dpi = 400)
+
+sysfonts::font_add_google("Oswald", family = "oswald")
+showtext::showtext_auto()
+
+# Set basesize for fonts in plots
+basesize <- 11
+
+
+# Regular plot theme
+theme_flynn <- function(){ 
+  
+      theme_linedraw(base_size = basesize, base_family = "oswald") %+replace% 
+        
+        theme(plot.title = element_text(face = "bold", size = basesize * 1.3, hjust = 0, margin = margin(t = 0, b = 0.3, l = 0, r = 0, unit = "cm")),
+              plot.subtitle = element_text(size = basesize),
+              plot.caption = element_text(face = "italic", size = basesize * 0.6),
+              panel.border = element_rect(fill = NA, size = 0.2),
+              strip.background = element_rect(fill = "gray80", color = "black", size = 0.2),
+              strip.text = element_text(size = basesize, color = "black", face = "bold", margin = margin(t = 0.2, b = 0.2, l = 0.2, r = 0.2, unit = "cm")),
+              panel.background = element_rect(size = 0.2),
+              panel.grid.major = element_line(color = "gray70", size = 0.15),
+              panel.grid.minor = element_line(color = "gray90", size = 0.1),
+              axis.title = element_text(face = "bold", size = basesize),
+              axis.title.y = element_text(angle = 90, margin = margin(t = 0, r = 0.5, b = 0, l = 0, unit = "cm")),
+              axis.title.x = element_text(margin = margin(t = 0.5, r = 0, b = 0, l = 0, unit = "cm")),
+              axis.ticks = element_line(size = 0.1),
+              axis.ticks.length = unit(0.1, "cm"),
+              legend.title = element_text(size = basesize, face = "bold", hjust = 0, margin = margin(t = 0, b = 0, l = 0, r = 0, unit = "cm")),
+              plot.margin = margin(0.5, 0.5, 0.5, 0.5, unit = "cm"),
+              legend.margin = margin(t=-10, b=0, r=0, l=0),
+              legend.box.margin = margin(-10,-10,-10,-10))
+  }
+
+# Map version of theme
+theme_flynn_map <- function(){
+  
+  theme_void(base_family = "oswald") %+replace% 
+    
+    theme(plot.title = element_text(face = "bold", size = 18, hjust = 0, margin = margin(t = 0, b = 0.3, l = 0, r = 0, unit = "cm")),
+          plot.subtitle = element_text(size = 12, hjust = 0, margin = margin(t = 0, b = 0.3, l = 0, r = 0, unit = "cm")),
+          plot.caption = element_text(face = "italic", size = 8, hjust = 1, margin = margin(t = 0.2, unit = "cm")),
+          strip.background = element_rect(fill = "gray80", color = "black"),
+          strip.text = element_text(color = "black", face = "bold"),
+          panel.grid.major = element_line(color = "white", size = 0),
+          panel.grid.minor = element_line(color = "white", size = 0),
+          #axis.title = element_text(face = "bold", size = 0),
+          #axis.title.y = element_text(margin = margin(t = 0, r = 0.5, b = 0, l = 0, unit = "cm")),
+          #axis.title.x = element_text(margin = margin(t = 0.5, r = 0, b = 0, l = 0, unit = "cm")),
+          legend.title = element_text(face = "bold"),
+          legend.position = "bottom",
+          legend.key.height = unit(0.6, "cm"),
+          legend.key.width = unit(2.5, "cm"))
+}
+
+
+p.data <- read_csv(here::here("../Book/Data/Chapter-Protests/protest-data-final.csv")) %>% 
+  group_by(ccode) %>% 
+  arrange(ccode, year) %>% 
+  mutate(log_troops_lag = lag(log_troops, order_by = year),
+         troops_lag = lag(troops, order_by = year),
+         anti_us_protest_lag = lag(anti_us_protest),
+         troops_cumsumtest_unlagged= cumsum(coalesce(troops, 0)),
+         troops_cumsumtest_lagged = lag(cumsum(coalesce(troops, 0)), length = 2),
+         troops_cumsumtest = log1p(lag(cumsum(troops), length = 2)),
+         troops_cumsum = log1p(lag(cumsum(coalesce(troops, 0)), length = 2))) %>% # Make sure to not drop Germany. This finds the first non-missing value in the vector and replacing the missing values with that. Should help bridge the gap with the missing values since the data start in the late 1980s.
+  ungroup() %>% 
+  mutate(log_troops_lag_z = arm::rescale(log_troops_lag),
+         log_troops_z = arm::rescale(log_troops),
+         log_troops_cumsum_z = arm::rescale(troops_cumsum)) %>% 
+  group_by(year) %>% 
+  mutate(troop.prop = troops/sum(troops, na.rm = TRUE))
+
+
+# Make sure all countries are represented if they should be. Germany I'm looking at you!
+ccodecheck <- p.data %>% 
+  dplyr::select(ccode, countryname, year, troops, starts_with("troops_cumsum"), log_troops_lag_z, log_troops_z, log_troops_cumsum_z) %>% 
+  filter(ccode == 255)
+
+checkNA <- p.data %>% 
+  filter(is.na(troops) & !is.na(lag(troops))) %>% 
+  dplyr::select(ccode, year)
+  
+  
+# Load opinion data for individual-level protest models.
+load(here::here("../Book/Data/General/opinion.data.RData")) 
+
+o.data <- o.data %>% 
+  mutate(protest_dummy = ifelse(protest == "Never", 0,
+                                ifelse(protest == "Don't know/Decline to answer", NA, 1)),
+         protest_dummy = factor(protest_dummy, levels = c(0, 1), labels = c("No", "Yes")),
+         log_basecount = log1p(basecount))
+
+
+# Generate random binomial variable based on representative group variables and country.
+# Use this to create a random training sample and then a test sample for the predictions.
+prediction.data <- o.data %>% 
+  group_by(country, age, gender, income.5.cat) %>% 
+  mutate(sample.group = rbinom(n(), size = 1, prob = 0.7),
+         sample.group = factor(sample.group, levels = c(0, 1), labels = c("Test", "Training")))
+
+training.data <- prediction.data %>% 
+  filter(sample.group == "Training")
+
+
+# Note that we have to re-factor the levels for troops_crime_pers and protest_dummy.
+# Because there are levels in the data that aren't in the model it thinks we're trying to force a new
+# factor level into the test data. Stan models can only do this for population-level effects when those factors levels are estimated in the model itself.
+test.data <- prediction.data %>% 
+  ungroup() %>% 
+  filter(sample.group == "Test") %>% 
+  mutate(protest_dummy = factor(protest_dummy, levels = c("Yes", "No")),
+         troops_crime_pers = factor(troops_crime_pers, levels = "Yes", "No"))
+
+
+# Set Seed
+SEED <- 66502
+set.seed(seed = SEED)
+
+```
+
+This chapter provides supplementary information on the book chapter dealing with individual protest behavior and anti-US protest activity at the aggregate level. Mirroring the main manuscript, we will first present supplementary information on the micro-level protest section and then present supplementary information on the macro-level protest section.
+
+
+## Micro-Level Protest
+
+The individual-level models consist of four separate models that build on one another. We Our focus here is to better understand the individual correlates of protest but also to understand the overall predictive performance of the models. More specifically, while we expect that the models will generally provide a better prediction with the addition of more predictor variables, we are interested in the relative gains from adding particular "blocks" of predictors. These blocks are described in the table below.
+
+```{r individual-level-summary-table, echo=FALSE}
+
+`Base Model` <- c("Base Count", "GDP", "Population", "Troops in country")
+`Demographics` <- c("Age", "Education", "Ideology", "Gender", "Income", "Minority Status", "Base Count", "GDP", "Population", "Troops in country")
+`Demographics and Attitudes` <- c("Age", "Education", "Ideology", "Gender", "Income", "Minority Status", "Attitude towards US military presence", "Assessment of US influence (Quantity)", "Assessment of US influence (Quality)", "Base Count", "GDP", "Population", "Troops in country")
+`Demographics, Attitudes, and Experiences` <- c("Age", "Education", "Ideology", "Gender", "Income", "Minority Status", "Attitude towards US military presence", "Personal contact", "Network Contact", "Personal benefits", "Network benefits", "Personal experience with troops and crime", "Network experience with crime", "Assessment of US influence (Quantity)", "Assessment of US influence (Quality)", "Base Count", "GDP", "Population", "Troops in country")
+
+list.length <- length(`Demographics, Attitudes, and Experiences`)
+length(`Base Model`) <- list.length
+length(`Demographics`) <- list.length
+length(`Demographics and Attitudes`) <- list.length
+length(`Demographics, Attitudes, and Experiences`) <- list.length
+
+var.list <- as.data.frame(cbind(`Base Model`, 
+                             `Demographics`, 
+                             `Demographics and Attitudes`, 
+                             `Demographics, Attitudes, and Experiences`)) %>% 
+  mutate(across(everything(), ~ifelse(is.na(.x), "", .x)))
+
+
+
+var.table <- kableExtra::kable(var.list, caption = "Predictive Model Specification for Individual Protest Activity \\label{tab:protestpredictionvariables}", booktabs = TRUE) %>% 
+  kable_styling(latex_options = "striped", protect_latex = TRUE, font_size = 9) %>% 
+  row_spec(0, bold = TRUE) %>% 
+  column_spec(1, width = "3.0cm") %>% 
+  column_spec(2, width = "3.0cm") %>% 
+  column_spec(3, width = "3.0cm") %>% 
+  column_spec(4, width = "3.0cm") %>% 
+  footnote(number = c("Each model include varyings intercepts for country and year. All models also include the primary predictor variables as varying coefficients across the country grouping."),
+           threeparttable = TRUE) 
+
+var.table
+
+
+```
+
+
+## Macro-Level Protest
+
+
+
+## Protest DAG
+
+The 
+
+```{r, protest-dag,  echo = FALSE, dpi=400, warning=FALSE, message=FALSE}
+library(tidygraph)
+library(latex2exp)
+library(dagitty)
+library(ggraph)
+
+# Draw DAG for Protest Count
+
+coords <- list(x = c(Protest = 6, Troops = 5, Growth = 1, GDP = 0, Trade = 1, Population = 0, Regime = 3, Conflict = 1, Ally = 3),
+               y = c(Protest = 6, Troops = 4, Growth = 4, GDP = 5, Trade = 2, Population = 7, Regime = 8, Conflict = 8, Ally = 4))
+
+daglabels <- c(Protest = "Protest", Troops = "Troops[t-1]", Growth = "Growth", GDP = "GDP", Trade = "Trade", Population = "Population BIG", Regime = "Regime Type", Conflict = "War", Ally = "Alliance")
+
+dagbase <- dagify(Protest ~ Troops + Growth + Population + Regime + Conflict,
+                  Troops ~ Regime + Conflict + Ally + Trade,
+                  Ally ~ Trade + GDP + Regime,
+                  Trade ~ Ally + GDP + Regime,
+                  GDP ~ Trade + Population + Conflict,
+                  Growth ~ Conflict + Trade + GDP,
+                  Regime ~ Conflict,
+                  exposure = "Troops",
+                  outcome = "Protest",
+                  coords = coords,
+                  labels = daglabels) %>% 
+  tidy_dagitty() 
+ 
+#ggdag(dagbase)
+
+dagbase2 <- dagitty(' dag{
+                    "Troops[t]" [exposure]
+                    "Protest[t]" [outcome]
+                    
+                    "Protest[t-1]" [pos="1,0"]
+                    "Troops[t-1]" [pos = "0,-0.5"]
+                    "Threat[t-1]" [pos="-1.1,1.5"]
+                    "Growth[t-1]" [pos="-1,3"]
+                    "Population[t-1]" [pos="-1.25,0"]
+                    "Regime[t-1]" [pos="-1.25,-1.5"]
+                    "GDP[t-1]" [pos="-1.1,-3"]
+                    "Rebellion[t-1]" [pos="-0.75,-6"]
+                    "Trade[t-1]" [pos="-0.5,-7"]
+                    "Ally[t-1]" [pos="-1,-4.5"]
+                    "Alignment[t-1]" [pos="-0.75,4.5"]
+                    "ProtestEnvironment[t-1]" [pos="0,6"]
+                    "USWar[t-1]" [pos="0,-8"]
+
+                    "Protest[t]" [pos="5,0"]
+                    "Troops[t]" [pos = "4,-0.5"]
+                    "Threat[t]" [pos="2.9,1.5"]
+                    "Growth[t]" [pos="3,3"]
+                    "Population[t]" [pos="2.75,0"]
+                    "Regime[t]" [pos="2.75,-1.5"]
+                    "GDP[t]" [pos="2.9,-3"]
+                    "Rebellion[t]" [pos="3.25,-6"]
+                    "Trade[t]" [pos="3.5,-7"]
+                    "Ally[t]" [pos="3,-4.5"]
+                    "Alignment[t]" [pos="3.25,4.5"]
+                    "ProtestEnvironment[t]" [pos="4,6"]
+                    "USWar[t]" [pos="4,-8"]
+                    
+                    "Protest[t-1]" -> "Protest[t]"
+                    "ProtestEnvironment[t-1]" -> "ProtestEnvironment[t]"
+                    "Troops[t-1]" -> "Troops[t]"
+                    "Population[t-1]" -> "Population[t]"
+                    "Regime[t-1]" -> "Regime[t]"
+                    "Threat[t-1]" -> "Threat[t]"
+                    "GDP[t-1]" -> "GDP[t]"
+                    "Growth[t-1]" -> "Growth[t]"
+                    "Rebellion[t-1]" -> "Rebellion[t]"
+                    "Trade[t-1]" -> "Trade[t]"
+                    "Ally[t-1]" -> "Ally[t]"
+                    "Alignment[t-1]" -> "Alignment[t]"
+                    "ProtestEnvironment[t-1]" -> "ProtestEnvironment[t]"
+                    "USWar[t-1]" -> "USWar[t]"
+                    
+                    
+                    "Regime[t]" -> {"Troops[t]" "ProtestEnvironment[t]" "Trade[t]" "Rebellion[t]" "Alignment[t]" "USWar[t]"}
+                    "Threat[t]" ->  {"Troops[t]" "Alignment[t]"}
+                    "Population[t]" -> "ProtestEnvironment[t]"
+                    "Population[t]" -> {"GDP[t]" "Trade[t]"}
+                    "Troops[t]" -> {"Protest[t]" "Growth[t]"}
+                    "Growth[t]" -> {"ProtestEnvironment[t]" "Protest[t]" "Rebellion[t]"}
+                    "Ally[t]" -> {"Troops[t]" "Protest[t]" "Trade[t]" "USWar[t]"}
+                    "Trade[t]" -> {"GDP[t]"}
+                    "GDP[t]" -> {"Trade[t]" "Rebellion[t]"}
+                    "Alignment[t]" -> {"Ally[t]" "USWar[t]" "Protest[t]"}
+                    "ProtestEnvironment[t]" -> {"Rebellion[t]" "Protest[t]"}
+                    "USWar[t]" -> {"Protest[t]" "Protest[t]"}
+                    "Rebellion[t]" -> {"Protest[t]"}
+
+
+                    "Regime[t-1]" -> {"Troops[t-1]" "ProtestEnvironment[t-1]" "Trade[t-1]" "Rebellion[t-1]" "Alignment[t-1]" "USWar[t-1]"}
+                    "Threat[t-1]" ->  {"Troops[t-1]" "Alignment[t-1]"}
+                    "Population[t-1]" -> "ProtestEnvironment[t-1]"
+                    "Population[t-1]" -> {"GDP[t-1]" "Trade[t-1]"}
+                    "Troops[t-1]" -> {"Protest[t-1]" "Growth[t-1]"}
+                    "Growth[t-1]" -> {"ProtestEnvironment[t-1]" "Protest[t-1]" "Rebellion[t-1]"}
+                    "Ally[t-1]" -> {"Troops[t-1]" "Protest[t-1]" "Trade[t-1]" "USWar[t-1]"}
+                    "Trade[t-1]" -> {"GDP[t-1]"}
+                    "GDP[t-1]" -> {"Trade[t-1]" "Rebellion[t-1]"}
+                    "Alignment[t-1]" -> {"Ally[t-1]" "USWar[t-1]" "Protest[t-1]"}
+                    "ProtestEnvironment[t-1]" -> {"Rebellion[t-1]" "Protest[t-1]"}
+                    "USWar[t-1]" -> {"Protest[t-1]" "Protest[t-1]"}
+                    "Rebellion[t-1]" -> {"Protest[t-1]"}
+
+
+                    "Troops[t-1]" -> "Protest[t]"
+                    "USWar[t-1]" -> "Troops[t]"
+
+                    }') 
+
+dagbasetidy <- tidy_dagitty(dagbase2)
+
+dagbase2 %>% 
+  tidy_dagitty() %>% 
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) + 
+    geom_dag_edges_arc(curvature = 0.05) +
+    geom_dag_text(parse = TRUE, color = "black", size = 4) +
+    theme_dag_blank()
+
+
+#adjustmentSets(dagbase2)
+
+dagbase2
+
+```
+
+
+```{r, echo=FALSE, warning=FALSE}
+# Prettier DAG for public consumption in text
+
+dag.pretty <- dagitty(' dag{
+                    "Troops[t]" [exposure]
+                    "Protest[t]" [outcome]
+                    
+                    "Protest[t]" [pos="1,1"]
+                    "Troops[t]" [pos = "0,0"]
+                    "Z[t]" [pos="0,2"]
+                    
+                    "Protest[t-1]" [pos="-1,1"]
+                    "Troops[t-1]" [pos = "-2,0"]
+                    "Z[t-1]" [pos="-2,2"]
+
+                    "Protest[t-1]" -> "Protest[t]"
+                    "Troops[t]" -> "Protest[t]"
+                    "Troops[t-1]" -> "Troops[t]"
+                    "Troops[t-1]" -> "Protest[t-1]"
+                    "Z[t-1]" -> "Z[t]"
+                    "Z[t]" -> "Troops[t]"
+                    
+                    "Troops[t-1]" -> "Protest[t]"
+                    "Z[t-1]" -> "Troops[t-1]"
+                    "Z[t-1]" -> "Protest[t-1]"
+                    "Z[t]" -> "Protest[t]"
+
+                    }') 
+
+
+dag.pretty.tidy <- tidy_dagitty(dag.pretty) %>% 
+  mutate(.$data, 
+         vartype = case_when(
+           name == "Troops[t]" ~ "Exposure",
+           name == "Protest[t]" ~ "Outcome",
+           grepl("Z", name) ~ "Confounders",
+           name == "Troops[t-1]" ~ "Lagged Treatment",
+           name == "Protest[t-1]" ~ "Lagged Outcome"
+
+         )) %>% 
+  dag_label(labels = c("Troops[t]" = "Troops[t]", "Troops[t-1]" = "Troops[t-1]", "Protest[t-1]" = "Protest[t-1]",
+                       "Protest[t]" = "Protest[t]", "Z[t]" = "Z[t]", "Z[t-1]" = "Z[t-1]")) 
+
+ 
+chart <- ggplot(dag.pretty.tidy, aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_dag_point(aes(color = vartype)) +
+  geom_dag_edges() +
+  geom_dag_label_repel(aes(label = label), parse = TRUE) +
+  theme_dag_blank() +
+  guides(color = FALSE) +
+  scale_color_manual(values = c("orange",  "#009E73", muted("dodgerblue1"), muted("009E73"), "dodgerblue1"))
+
+chart
+
+```
+
+
+Test

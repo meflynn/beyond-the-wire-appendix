@@ -1,0 +1,385 @@
+# Deployments and Contact {#contact-benefits}
+
+This chapter contains supplementary information on the chapter exploring how contact and benefits relate to individual attitudes.
+
+```{r setup, warning=FALSE, message=FALSE, echo=FALSE}
+library(tidyverse)
+library(tidyr)
+library(data.table)
+library(job)
+library(broom)
+library(broom.mixed)
+library(modelr)
+library(cshapes)
+library(countrycode)
+library(dagitty)
+library(ggdag)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(arm)
+library(brms)
+library(rstan)
+library(cmdstanr)
+library(parallel)
+library(tidybayes)
+library(scales)
+library(ggdist)
+library(ggh4x)
+#library(ggtrack)
+library(viridis)
+library(kableExtra)
+library(BayesPostEst)
+library(texreg)
+library(modelsummary)
+library(gt)
+library(webshot)
+library(kableExtra)
+library(ggExtra)
+library(ggrepel)
+library(ggmcmc)
+library(ggpubr)
+library(ggtext)
+library(patchwork)
+library(here)
+library(performance)
+library(tictoc)
+library(sysfonts)
+library(remotes)
+library(formattable)
+library(sparkline)
+library(ltxsparklines)
+
+
+knitr::opts_chunk$set(comment = '', dpi = 400)
+
+sysfonts::font_add_google("Oswald", family = "oswald")
+showtext::showtext_auto()
+
+# Set basesize for fonts in plots
+basesize <- 11
+
+
+# Regular plot theme
+theme_flynn <- function(){ 
+  
+      theme_linedraw(base_size = basesize, base_family = "oswald") %+replace% 
+        
+        theme(plot.title = element_text(face = "bold", size = basesize * 1.3, hjust = 0, margin = margin(t = 0, b = 0.3, l = 0, r = 0, unit = "cm")),
+              plot.subtitle = element_text(size = basesize),
+              plot.caption = element_text(face = "italic", size = basesize * 0.6),
+              panel.border = element_rect(fill = NA, size = 0.2),
+              strip.background = element_rect(fill = "gray80", color = "black", size = 0.2),
+              strip.text = element_text(size = basesize, color = "black", face = "bold", margin = margin(t = 0.2, b = 0.2, l = 0.2, r = 0.2, unit = "cm")),
+              panel.background = element_rect(size = 0.2),
+              panel.grid.major = element_line(color = "gray70", size = 0.15),
+              panel.grid.minor = element_line(color = "gray90", size = 0.1),
+              axis.title = element_text(face = "bold", size = basesize),
+              axis.title.y = element_text(angle = 90, margin = margin(t = 0, r = 0.5, b = 0, l = 0, unit = "cm")),
+              axis.title.x = element_text(margin = margin(t = 0.5, r = 0, b = 0, l = 0, unit = "cm")),
+              axis.ticks = element_line(size = 0.1),
+              axis.ticks.length = unit(0.1, "cm"),
+              legend.title = element_text(size = basesize, face = "bold", hjust = 0, margin = margin(t = 0, b = 0, l = 0, r = 0, unit = "cm")),
+              plot.margin = margin(0.5, 0.5, 0.5, 0.5, unit = "cm"),
+              legend.margin = margin(t=-10, b=0, r=0, l=0),
+              legend.box.margin = margin(-10,-10,-10,-10))
+  }
+
+# Map version of theme
+theme_flynn_map <- function(){
+  
+  theme_void(base_family = "oswald") %+replace% 
+    
+    theme(plot.title = element_text(face = "bold", size = 18, hjust = 0, margin = margin(t = 0, b = 0.3, l = 0, r = 0, unit = "cm")),
+          plot.subtitle = element_text(size = 12, hjust = 0, margin = margin(t = 0, b = 0.3, l = 0, r = 0, unit = "cm")),
+          plot.caption = element_text(face = "italic", size = 8, hjust = 1, margin = margin(t = 0.2, unit = "cm")),
+          strip.background = element_rect(fill = "gray80", color = "black"),
+          strip.text = element_text(color = "black", face = "bold"),
+          panel.grid.major = element_line(color = "white", size = 0),
+          panel.grid.minor = element_line(color = "white", size = 0),
+          #axis.title = element_text(face = "bold", size = 0),
+          #axis.title.y = element_text(margin = margin(t = 0, r = 0.5, b = 0, l = 0, unit = "cm")),
+          #axis.title.x = element_text(margin = margin(t = 0.5, r = 0, b = 0, l = 0, unit = "cm")),
+          legend.title = element_text(face = "bold"),
+          legend.position = "bottom",
+          legend.key.height = unit(0.6, "cm"),
+          legend.key.width = unit(2.5, "cm"))
+}
+
+
+ccode.list <- c("200", "210", "211", "230", "235", "255", "290", "325", "640", "690", "732", "740", "840", "900")
+
+
+### Stan Setup ####
+
+# Conflicted pckage really fucks things up
+if(any(grepl("package:conflicted", search()))) detach("package:conflicted") else message("package conflicted not loaded")
+
+
+# Parallelize machine
+options(mc.cores = parallel::detectCores())
+ncores <- parallel::detectCores()
+rstan_options(auto_write = TRUE)
+
+
+# Load opinion data for individual-level protest models.
+load(here::here("../Book/Data/General", "opinion.data.RData")) 
+
+# This fixes an encoding issue which duplicated the "Other" category unnecessarily. 
+o.data <- setDT(o.data)[
+  , relig := ifelse(grepl("Other", relig), "Other", relig)
+]
+
+set.seed(seed = 66502)
+
+
+# create data frame for prior tables because bookdown doesn't like something about reading the brms rds files in.
+# m.1 <- readRDS(here::here("Output/Chapter-Contact/m.c.t1.rds"))
+
+m.c.t1 <- readRDS(here::here("../Book/Output/Chapter-Contact/m.c.t1.rds"))
+m.c.g1 <- readRDS(here::here("../Book/Output/Chapter-Contact/m.c.g1.rds"))
+m.c.p1 <- readRDS(here::here("../Book/Output/Chapter-Contact/m.c.p1.rds"))
+
+priors.t <- brms::prior_summary(m.c.t1) 
+priors.g <- brms::prior_summary(m.c.g1)
+priors.p <- brms::prior_summary(m.c.p1)
+```
+
+
+## Descriptive Information
+
+
+```{r, warning=FALSE, echo=FALSE, message=FALSE, fig.cap="Map of countries included in the survey. Color coding indicates which survey firm fielded the surveys in a given country."}
+#### Map of survey firm coverage ####
+
+ccode.list.q <- c("210", "211", "230", "235", "290", "640", "840", "900")
+ccode.list.s <- c("200", "255", "290", "325", "690", "732", "740")
+
+
+world <- ne_countries(scale = "medium", returnclass = "sf") %>% 
+  filter(name != "Antarctica")
+
+qualtrics <- ne_countries(scale = "medium", returnclass = "sf") %>% 
+  mutate(ccode = countrycode(name, "country.name", "cown")) %>% 
+  filter(ccode %in% as.numeric(ccode.list.q))
+
+schlesinger <- ne_countries(scale = "medium", returnclass = "sf") %>% 
+  mutate(ccode = countrycode(name, "country.name", "cown")) %>% 
+  filter(ccode %in% as.numeric(ccode.list.s))
+
+map.survey <- ggplot() +
+  geom_sf(data = world, color = "gray90", fill = "gray90") +
+  geom_sf(data = qualtrics, color = "black",  aes(fill = "Qualtrics"), size = 0.1) +
+  geom_sf(data = schlesinger, color = "black", aes( fill = "Schlesinger"), size = 0.1) +
+  theme_void() +
+  theme(legend.position = "bottom",
+        legend.title = element_text(face = "bold")) +
+  scale_x_continuous(expand = c(0, 0)) +
+  viridis::scale_fill_viridis(discrete = TRUE, begin = 0.1, end = 0.65, option = "magma") +
+  coord_sf(crs = st_crs("ESRI:54030"))  +
+  labs(fill = "Survey Firm")
+
+map.survey
+```
+
+
+
+Summary statistics detailing breakdown of views.
+
+One detail that we wanted to convey in the book was just how out of step views of the US government often are compared with views of US military personnel and the American people. Figure \@ref(fig:gov-gap) shows these differences by showing the percent of people in each country who responded with a favorable or unfavorable view of the group listed on the X axis. 
+
+```{r gov-gap, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Favorable and Unfavorable views of US actors. Categories aggregated to favorable and unfavorable based on a response of 'Somewhat' or 'Very'."}
+# Germany favorable responses
+view.troops <- as.data.table(o.data)[!is.na(country) & !is.na(troops_1), troops_1, country][
+  , .N, by = .(country, troops_1)
+]
+
+view.people <- as.data.table(o.data)[!is.na(country) & !is.na(american_people), american_people, country][
+  , .N, by = .(country, american_people)
+]
+
+view.gov <- as.data.table(o.data)[!is.na(country) & !is.na(american_gov), american_gov, country][
+  , .N, by = .(country, american_gov)
+]
+
+
+troops.breakdown <- view.troops %>% 
+  group_by(country) %>% 
+  dplyr::mutate(positive = sum(N[grepl("Somewhat favorable|Very favorable", troops_1)])/sum(N),
+                negative = sum(N[grepl("Somewhat unfavorable|Very unfavorable", troops_1)])/sum(N),
+                neutral = sum(N[grepl("Neutral", troops_1)])/sum(N)) %>% 
+  summarise(positive = mean(positive),
+            negative = mean(negative),
+            neutral = mean(neutral)) 
+
+
+gov.breakdown <- view.gov %>% 
+  group_by(country) %>% 
+  dplyr::mutate(positive = sum(N[grepl("Somewhat favorable|Very favorable", american_gov)])/sum(N),
+                negative = sum(N[grepl("Somewhat unfavorable|Very unfavorable", american_gov)])/sum(N),
+                neutral = sum(N[grepl("Neutral", american_gov)])/sum(N)) %>% 
+  summarise(positive = mean(positive),
+            negative = mean(negative),
+            neutral = mean(neutral))
+
+people.breakdown <- view.people %>% 
+  group_by(country) %>% 
+  dplyr::mutate(positive = sum(N[grepl("Somewhat favorable|Very favorable", american_people)])/sum(N),
+                negative = sum(N[grepl("Somewhat unfavorable|Very unfavorable", american_people)])/sum(N),
+                neutral = sum(N[grepl("Neutral", american_people)])/sum(N)) %>% 
+  summarise(positive = mean(positive),
+            negative = mean(negative),
+            neutral = mean(neutral))
+
+com.breakdown <- bind_rows(troops.breakdown, gov.breakdown, people.breakdown) %>% 
+  mutate(group = rep(c("US Presence", "US Government", "US People"), each = 14),
+         group = factor(group, levels = c("US Presence", "US Government", "US People"))) %>% 
+  pivot_longer(cols = c("positive", "negative", "neutral"),
+               values_to = "value",
+               names_to = "assessment") %>% 
+  mutate(assessment = factor(assessment, levels = c("positive", "neutral", "negative"), labels = c("Favorable", "Neutral", "Unfavorable")))
+
+
+ggplot(com.breakdown %>% filter(assessment != "Neutral"), aes(x = group, y = value, group = country, fill = country)) +
+  geom_line(aes(color = country), size = 1.5, alpha = 0.7, position = position_dodge(width = .25)) +
+  geom_point(size = 5, pch = 21, color = "black", alpha = 1.0, stroke = 1.25, position = position_dodge(width = .25)) +
+  geom_text_repel(data = com.breakdown %>% filter(group == "US Presence" & assessment != "Neutral"), aes(label = country), hjust = "left", nudge_x = -0.5, nudge_y = 0.05, size = 3.5,  segment.curvature = 1e-20,  min.segment.length = 0.5) +
+  theme_flynn() +
+  theme(legend.position = "bottom",
+        legend.text = element_text(margin = margin(l = -0.0, unit = "cm")),
+        panel.border = element_rect(size = 0.2),
+        strip.background = element_rect(size = 0.2)) +
+  facet_grid(. ~ assessment) +
+  scale_y_continuous(labels = percent_format()) +
+  scale_x_discrete(expand = c(0.5,0)) +
+  scale_color_viridis(discrete = TRUE, option = "plasma") +
+  scale_fill_viridis(discrete = TRUE, option = "plasma") +
+  labs(x = "",
+       y = "Percent",
+       color = "Country",
+       fill = "Country")
+```
+
+For more detail how the countries vary in terms of reported forms of contact and benefits, Table \@ref(tab:contact-benefits-summary) shows the proportion of people responding "Yes" in each country when asked about their contact experience or whether they receive personal economic benefits from a US military presence, or if they know someone who receives such an economic benefit.
+
+
+```{r contact-benefits-summary, echo=FALSE,warning=FALSE}
+
+# Generate table with percentages for different responses in different countries
+contact.fig <- as.data.table(o.data)[!is.na(country) & !is.na(contact_pers) & !is.na(contact_nonpers) & !is.na(benefit_pers) & !is.na(benefit_nonpers)][
+  , melt(.SD, id.vars = "country", measure.vars =  c("contact_pers", "benefit_pers", "contact_nonpers", "benefit_nonpers"))
+][
+  , .(count = .N), by = c("country", "variable", "value")
+]
+
+contact.percents <- contact.fig[
+  , percent := count/sum(count), by = c("country", "variable")
+][
+  , dcast(.SD, country + value ~ variable, value.var = "percent")
+][
+  value == "Yes"
+][
+  , c("country", "contact_pers", "benefit_pers", "contact_nonpers", "benefit_nonpers")
+]
+
+names(contact.percents) <- c("Country", "Personal Contact", "Personal Benefits", "Network Contact", "Network Benefits")
+
+
+kable(contact.percents, digits = 3, caption = "Breakdown of the proportion of individuals who responded 'Yes' to key contact and benefit questions in each country.") |> 
+  kableExtra::kable_styling(font_size = 11)
+
+```
+
+
+## Supplemental Information on Models
+
+### Variables and Model Specifications
+
+In the main text of the book we present the findings from a number of different models. We provide additional information here detailing the specifications of these different models, including data sources and transformations.
+
+The opinion data we use come from a three-year long series of public opinion surveys conducted across 14 different countries. These data were collected using a research grant from the United States Department of Defense's Minerva Research Initiative. All of the individual-level variables we use in the analysis are from this original data set. With the exception of the outcome variables we use to assess attitudes towards different U.S. actors, all of the variables used in the models retain their original forms as described in the survey. The outcome variables are condensed into general categories indicating whether or not respondents express a 1) positive, 2) negative, 3) neutral, or 4) don't know/decline to answer response. We used the first year of these data in our earlier research on the subject (see @Allen2020) We provide more details in the main text.
+
+We also use a variety of country-level variables in our models, described below. 
+
+First, we measure the respondent's country's level of democracy using data from the Varieties of Democracy Project [@VDemV111; @Vdemcodebook2021]. Specifically, we use the `v2x_polyarchy` variable. This variable is a composite of other indicator variables that code various aspects of a country's democratic performance. This variable runs from 0 to 1 with higher values indicating more democratic countries and lower values indicating less democratic countries. 
+
+Second, we also include variables that measure the country's total population and its gross domestic product (GDP). We obtain these data from the World Bank's World Development Indicators dataset using the `{wbstats}` software package for R [@wdidata2021; @piburn2020]. Specifically, we use the SP.POP.TOTL and NY.GDP.MKTP.KD variables. 
+
+Third, we include measures of the number of U.S. military personnel deployed to the host country in a given year. To generate these values we use data obtained from the `{troopdata}` software package for R [@allenflynnmartinezmachain2022]. These data originally come from the Defense Manpower Data Center and were initially compiled by @Kane2004.
+
+Fourth, we include a count of the number of U.S. military bases within each region of the host country. We generate these variables using data from David Vine [Vine2015] contained in the `{troopdata}` package. We used the `{raster}` software package in R [@hijmans2022] to generate shapefiles using the Database of Global Administrative Areas (GADM) [@GADM2021]. We then use the `{sp}` software package to check for overlap between base locations and administrative regions. We then take the sum of the base locations that fall within each administrative area.
+
+When running our models we use a standardized version of each of these variables. Specifically, this means that each value is divided by two standard deviations. While this can offer a number of benefits in interpreting variables (see @Gelman2008) this approach also provides computational advantages by rescaling the predictor variables and reducing the variability in their range.
+
+### Further Discussions from Chapter 3
+
+Before moving on to the next section, Figure \ref{fig:priorcomparison} compares the prior probability distributions used in our models, which represent our beliefs about the relationship between contact and perceptions using only 2018 the data from our previous research, to the posterior distributions, which represent the our beliefs about the relationship between our key variables, given our full sample of data.[@Allen2020] This figure can help us understand how much our findings have changed as a result of including two additional years of surveys in our analysis. The larger points represent the prior values, and the smaller ones represent the posterior estimates from the models in this chapter. The different colors of the points correspond to the respondents' assessments of the US military, government, and people. The overall structure of the figure is similar to that of Figure \ref{fig:coefplot1}, but to streamline the presentation and focus on the most relevant quantities, we only include the values corresponding to the ``yes'' responses for the contact and benefit variables. 
+
+```{r priorcomparison, echo = FALSE, height = 7, width = 8}
+knitr::include_graphics("../Book/Figures/Chapter-Contact/figure-coefficient-prior-comparison.png")
+```
+
+In general, the results of our current analysis largely reflect the results of the previous analysis. The priors and posteriors for the positive and negative responses are reasonably close to one another. When we focus only on the positive and negative response categories, we see that in roughly two-thirds of the coefficient estimates, the current analysis produces slightly smaller coefficient estimates than in our previous study. To put it differently, in many cases, the addition of the new data appears to have pulled the coefficients in towards 0, producing smaller absolute values of the estimates. In the remaining cases, the updated estimates are roughly equivalent to the prior values or larger. However, these differences are fairly small across the board.
+
+Where we see greater levels of divergence, it tends to be in the estimates of the "don't know/decline" response categories. Further, in these cases, the current analysis generally produces smaller coefficient values for this response category. A smaller coefficient indicates that, across the different contact\index{contact} and benefit questions, individuals who respond "yes" to these questions are less different from those who responded "no" when giving a "don't know/decline" response than our first analysis suggested.
+
+
+### Prior Specification Tables
+
+```{r prior-info-troops, warning=FALSE, echo=FALSE, message=FALSE}
+
+kableExtra::kable(priors.t, caption = "Priors specifications for Troops contact models.", digits = 3) |> 
+  kableExtra::kable_styling(font_size = 11) |> 
+  kableExtra::scroll_box(height = "400px", width = "100%")
+
+```
+
+```{r prior-info-gov, warning=FALSE, echo=FALSE, message=FALSE}
+
+kableExtra::kable(priors.g, caption = "Priors specifications for Government contact models.", digits = 3) |> 
+  kableExtra::kable_styling(font_size = 11) |> 
+  kableExtra::scroll_box(height = "400px", width = "100%")
+
+```
+
+```{r prior-info-people, warning=FALSE, echo=FALSE, message=FALSE}
+
+kableExtra::kable(priors.p, caption = "Priors specifications for People contact models.", digits = 3) |> 
+  kableExtra::kable_styling(font_size = 11) |> 
+  kableExtra::scroll_box(height = "400px", width = "100%")
+
+```
+
+
+### Posterior Predictive Check Figures
+
+```{r posterior-check-troops, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for contact models and attitudes towards the US troops outcome variable."}
+check.t <- brms::pp_check(m.c.t1, nsamples = 1000, type = "bars_grouped", group = "country") +
+  theme_flynn() +
+  labs(title = "Posterior Predictive Check for Troops Model")
+
+check.t
+
+```
+
+```{r posterior-check-gov, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for contact models and attitudes towards the US government outcome variable."}
+check.g <- brms::pp_check(m.c.g1, nsamples = 1000, type = "bars_grouped", group = "country") +
+  theme_flynn() +
+  labs(title = "Posterior Predictive Check for Government Model")
+
+check.g
+
+```
+
+
+```{r posterior-check-people, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for contact models and attitudes towards the US people outcome variable."}
+check.p <- brms::pp_check(m.c.p1, nsamples = 1000, type = "bars_grouped", group = "country") +
+  theme_flynn() +
+  labs(title = "Posterior Predictive Check for People Model")
+
+check.p
+
+```
+
+
+

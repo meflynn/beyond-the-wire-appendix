@@ -1,0 +1,274 @@
+# Reported Crime
+
+This appendix chapter contains supplementary information corresponding to Chapter 2 on interpersonal contact and economic benefits. 
+
+```{r setup, warning=FALSE, message=FALSE, echo=FALSE}
+library(tidyverse)
+library(tidyr)
+library(data.table)
+library(job)
+library(broom)
+library(broom.mixed)
+library(modelr)
+library(cshapes)
+library(countrycode)
+library(dagitty)
+library(ggdag)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(arm)
+library(brms)
+library(rstan)
+library(cmdstanr)
+library(parallel)
+library(tidybayes)
+library(scales)
+library(ggdist)
+library(ggh4x)
+#library(ggtrack)
+library(viridis)
+library(kableExtra)
+library(BayesPostEst)
+library(texreg)
+library(modelsummary)
+library(gt)
+library(webshot)
+library(kableExtra)
+library(ggExtra)
+library(ggrepel)
+library(ggmcmc)
+library(ggpubr)
+library(ggtext)
+library(patchwork)
+library(here)
+library(performance)
+library(tictoc)
+library(sysfonts)
+library(remotes)
+library(formattable)
+library(sparkline)
+library(ltxsparklines)
+
+
+knitr::opts_chunk$set(comment = '', dpi = 400, warning = FALSE, echo = FALSE, message = FALSE)
+
+sysfonts::font_add_google("Oswald", family = "oswald")
+showtext::showtext_auto()
+
+# Set basesize for fonts in plots
+basesize <- 11
+
+
+# Regular plot theme
+theme_flynn <- function(){ 
+  
+      theme_linedraw(base_size = basesize, base_family = "oswald") %+replace% 
+        
+        theme(plot.title = element_text(face = "bold", size = basesize * 1.3, hjust = 0, margin = margin(t = 0, b = 0.3, l = 0, r = 0, unit = "cm")),
+              plot.subtitle = element_text(size = basesize),
+              plot.caption = element_text(face = "italic", size = basesize * 0.6),
+              panel.border = element_rect(fill = NA, size = 0.2),
+              strip.background = element_rect(fill = "gray80", color = "black", size = 0.2),
+              strip.text = element_text(size = basesize, color = "black", face = "bold", margin = margin(t = 0.2, b = 0.2, l = 0.2, r = 0.2, unit = "cm")),
+              panel.background = element_rect(size = 0.2),
+              panel.grid.major = element_line(color = "gray70", size = 0.15),
+              panel.grid.minor = element_line(color = "gray90", size = 0.1),
+              axis.title = element_text(face = "bold", size = basesize),
+              axis.title.y = element_text(angle = 90, margin = margin(t = 0, r = 0.5, b = 0, l = 0, unit = "cm")),
+              axis.title.x = element_text(margin = margin(t = 0.5, r = 0, b = 0, l = 0, unit = "cm")),
+              axis.ticks = element_line(size = 0.1),
+              axis.ticks.length = unit(0.1, "cm"),
+              legend.title = element_text(size = basesize, face = "bold", hjust = 0, margin = margin(t = 0, b = 0, l = 0, r = 0, unit = "cm")),
+              plot.margin = margin(0.5, 0.5, 0.5, 0.5, unit = "cm"),
+              legend.margin = margin(t=-10, b=0, r=0, l=0),
+              legend.box.margin = margin(-10,-10,-10,-10))
+  }
+
+# Map version of theme
+theme_flynn_map <- function(){
+  
+  theme_void(base_family = "oswald") %+replace% 
+    
+    theme(plot.title = element_text(face = "bold", size = 18, hjust = 0, margin = margin(t = 0, b = 0.3, l = 0, r = 0, unit = "cm")),
+          plot.subtitle = element_text(size = 12, hjust = 0, margin = margin(t = 0, b = 0.3, l = 0, r = 0, unit = "cm")),
+          plot.caption = element_text(face = "italic", size = 8, hjust = 1, margin = margin(t = 0.2, unit = "cm")),
+          strip.background = element_rect(fill = "gray80", color = "black"),
+          strip.text = element_text(color = "black", face = "bold"),
+          panel.grid.major = element_line(color = "white", size = 0),
+          panel.grid.minor = element_line(color = "white", size = 0),
+          #axis.title = element_text(face = "bold", size = 0),
+          #axis.title.y = element_text(margin = margin(t = 0, r = 0.5, b = 0, l = 0, unit = "cm")),
+          #axis.title.x = element_text(margin = margin(t = 0.5, r = 0, b = 0, l = 0, unit = "cm")),
+          legend.title = element_text(face = "bold"),
+          legend.position = "bottom",
+          legend.key.height = unit(0.6, "cm"),
+          legend.key.width = unit(2.5, "cm"))
+}
+
+
+ccode.list <- c("200", "210", "211", "230", "235", "255", "290", "325", "640", "690", "732", "740", "840", "900")
+
+
+### Stan Setup ####
+
+# Conflicted pckage really fucks things up
+if(any(grepl("package:conflicted", search()))) detach("package:conflicted") else message("package conflicted not loaded")
+
+
+# Parallelize machine
+options(mc.cores = parallel::detectCores())
+ncores <- parallel::detectCores()
+rstan_options(auto_write = TRUE)
+
+
+# Load opinion data for individual-level protest models.
+load(here::here("../Book/Data/General", "opinion.data.RData")) 
+
+# This fixes an encoding issue which duplicated the "Other" category unnecessarily. 
+o.data <- setDT(o.data)[
+  , relig := ifelse(grepl("Other", relig), "Other", relig)
+]
+
+set.seed(seed = 66502)
+
+
+# create data frame for prior tables because bookdown doesn't like something about reading the brms rds files in.
+# m.1 <- readRDS(here::here("Output/Chapter-Contact/m.c.t1.rds"))
+
+m.cr.t1 <- readRDS(here::here("../Book/Output/Chapter-Crime/m.cr.t1.rds"))
+m.cr.g1 <- readRDS(here::here("../Book/Output/Chapter-Crime/m.cr.g1.rds"))
+m.cr.p1 <- readRDS(here::here("../Book/Output/Chapter-Crime/m.cr.p1.rds"))
+
+priors.t <- brms::prior_summary(m.cr.t1) 
+priors.g <- brms::prior_summary(m.cr.g1)
+priors.p <- brms::prior_summary(m.cr.p1)
+```
+
+
+## Supplementary Figures on Reported Crime
+
+```{r troops-crime-pers, fig.cap="Rates of reported instances of crime experienced by respondents across surveyed countries.", echo=FALSE, warning=FALSE, message=FALSE}
+
+troops.crime.pers <- o.data[
+  !is.na(country) & !is.na(troops_crime_pers)
+][
+  , .N , by = .(country, troops_crime_pers)
+]
+
+# Note: there are about 200 NA values returned for the troops_crime_pers variable but these all appear to be
+# bad or incomplete responses. There are almost no questions answered for these observations.
+#test <- as.data.table(base.data)[
+#  is.na(troops_crime_pers)
+#]
+
+ggplot(troops.crime.pers, aes(x = N, y = country, fill = troops_crime_pers)) +
+  geom_bar(stat = "identity", position = "fill", color = "black", size = 0.1) +
+  scale_x_continuous(labels = percent_format(), expand = c(0, 0)) + 
+  scale_y_discrete(expand = c(0, 0)) + 
+  viridis::scale_fill_viridis(discrete = TRUE, option = "magma", direction = -1) +
+  theme_flynn() +
+  theme(panel.border = element_blank(),
+        axis.line =  element_blank(),
+        panel.grid.major = element_blank(),
+        legend.position = "bottom",
+        plot.title.position = "plot",
+        legend.margin=margin(t=-20, b=0, r=0, l=0)) +
+  guides(fill = guide_legend(reverse = TRUE)) +
+  labs(x = "",
+       y = "",
+       title = "Have you personally been the victim of a crime committed by a member of the US military?",
+       fill = "Response")
+
+```
+
+```{r troops-crime-nonpers, fig.cap="Rates of reported instances of crime experienced within social networks across surveyed countries.", echo = FALSE, warning=FALSE, message=FALSE}
+
+troops.crime.nonpers <- setDT(o.data)
+
+troops.crime.nonpers <- troops.crime.nonpers[
+  !is.na(country) & !is.na(troops_crime_nonpers)
+][
+  , .N , by = .(country, troops_crime_nonpers)
+]
+
+ggplot(troops.crime.nonpers, aes(x = N, y = country, fill = troops_crime_nonpers)) +
+  geom_bar(stat = "identity", position = "fill", color = "black", size = 0.1) +
+  scale_x_continuous(labels = percent_format(), expand = c(0, 0)) + 
+  scale_y_discrete(expand = c(0, 0)) + 
+  viridis::scale_fill_viridis(discrete = TRUE, option = "magma", direction = -1) +
+  theme_flynn() +
+  theme(panel.border = element_blank(),
+        axis.line =  element_blank(),
+        panel.grid.major = element_blank(),
+        legend.position = "bottom",
+        plot.title.position = "plot",
+        plot.title = element_markdown(size = basesize*1.2),
+        legend.margin=margin(t=-20, b=0, r=0, l=0)) +
+  guides(fill = guide_legend(reverse = TRUE)) +
+  labs(x = "",
+       y = "",
+       title = "Do you know someone who has been the victim of a crime committed by a member of the US military?",
+       fill = "Response")
+
+
+```
+
+
+### Prior Specification Tables for Crime Models
+
+```{r prior-info-crime-troops, warning=FALSE, echo=FALSE, message=FALSE}
+
+kableExtra::kable(priors.t, caption = "Priors specifications for Troops contact models.", digits = 3) |> 
+  kableExtra::kable_styling(font_size = 11) |> 
+  kableExtra::scroll_box(height = "400px", width = "100%")
+
+```
+
+```{r prior-info-crime-gov, warning=FALSE, echo=FALSE, message=FALSE}
+
+kableExtra::kable(priors.g, caption = "Priors specifications for Government contact models.", digits = 3) |> 
+  kableExtra::kable_styling(font_size = 11) |> 
+  kableExtra::scroll_box(height = "400px", width = "100%")
+
+```
+
+```{r prior-info-crime-people, warning=FALSE, echo=FALSE, message=FALSE}
+
+kableExtra::kable(priors.p, caption = "Priors specifications for People contact models.", digits = 3) |> 
+  kableExtra::kable_styling(font_size = 11) |> 
+  kableExtra::scroll_box(height = "400px", width = "100%")
+
+```
+
+
+### Posterior Predictive Check Figures
+
+```{r posterior-check-crime-troops, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for contact models and attitudes towards the US troops outcome variable."}
+check.t <- brms::pp_check(m.cr.t1, nsamples = 1000, type = "bars_grouped", group = "country") +
+  theme_flynn() +
+  labs(title = "Posterior Predictive Check for Troops Model")
+
+check.t
+
+```
+
+```{r posterior-check-crime-gov, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for contact models and attitudes towards the US government outcome variable."}
+check.g <- brms::pp_check(m.cr.g1, nsamples = 1000, type = "bars_grouped", group = "country") +
+  theme_flynn() +
+  labs(title = "Posterior Predictive Check for Government Model")
+
+check.g
+
+```
+
+
+```{r posterior-check-crime-people, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for contact models and attitudes towards the US people outcome variable."}
+check.p <- brms::pp_check(m.cr.p1, nsamples = 1000, type = "bars_grouped", group = "country") +
+  theme_flynn() +
+  labs(title = "Posterior Predictive Check for People Model")
+
+check.p
+
+```
+
