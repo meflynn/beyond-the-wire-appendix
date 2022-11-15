@@ -7,64 +7,87 @@ This chapter contains supplementary information on the chapter exploring how con
 
 ## Survey Information
 
-1 - Country Abbreviation (iso3c)
-  Uses the ISO3C abbreviation format.
+1 - Country Abbreviation (iso3c). \
+Uses the ISO3C abbreviation format.
+  
   Values:
-    AUS - Australia BEL - Belgium GMY - Germany ITA - Italy
-    JPN - Japan
-    KUW - Kuwait
-    NTH - Netherlands
-    PHI - Philippines
-    POL - Poland
-    POR - Portugal
-    ROK - South Korea SPN - Spain
-    TUR - Turkey
-    UKG - United Kingdom
+  
+  AUS - Australia \
+  BEL - Belgium \
+  GMY - Germany \
+  ITA - Italy \
+  JPN - Japan \
+  KUW - Kuwait \
+  NTH - Netherlands \
+  PHI - Philippines \
+  POL - Poland \
+  POR - Portugal \
+  ROK - South Korea \
+  SPN - Spain \
+  TUR - Turkey \
+  UKG - United Kingdom \
     
 2 - Language
+  
   The language the respondent took the survey in.
+  
   Values:
-    1 - English 2 - Dutch
-    3 - French
-    4 - German 5 - Italian
-    6 - Japanese 7 - Arabic
-    8 - Tagalog
-    9 - Polish
-    10 - Portuguese 11 - Korean
-    12 - Spanish
-    13 - Turkish
+  
+  1 - English \
+  2 - Dutch \
+  3 - French \
+  4 - German \
+  5 - Italian \
+  6 - Japanese \
+  7 - Arabic \
+  8 - Tagalog \
+  9 - Polish \
+  10 - Portuguese \
+  11 - Korean \
+  12 - Spanish \
+  13 - Turkish \
     
 ### Dependent Variables
 
 This subsection shows the available responses for the three questions that serve as the basis for our dependent variables. Please note that we recode these variables when we estimate our categorical logit models. For our primary models we collapse the six original categories down into four: 1) Positive views, 2) Negative views, 3) Neutral views, and 4) Don’t know/Decline to answer. This approach has a couple of advantages. First, while we prefer to collect data at a fine-grained level, we have little empirical or theoretical basis for evaluating the substantive difference between the "Somewhat" and "Very" categories. However, there is a clearer and more meaningful distinction between positive and negative views. Second, the simpler saves us a considerable amount of time given the computational intensity of the multilevel categorical models, which we discuss more below.
 
-3 - Question: US Military Presence (troops_1)
+3 - Question: US Military Presence (troops_1) \
 "In general, what is your opinion of the presence of American military forces in (respondent’s country)?"
+  
   Values:
-    1 - Don’t know/decline to answer 2 - Very favorable
-    3 - Somewhat favorable
-    4 - Neutral
-    5 - Somewhat unfavorable 6 - Very unfavorable
+  
+  1 - Don’t know/decline to answer \
+  2 - Very favorable \
+  3 - Somewhat favorable \
+  4 - Neutral \
+  5 - Somewhat unfavorable \
+  6 - Very unfavorable \
 
 
-4 - Question: American Government (american_gov)
+4 - Question: American Government (american_gov) \
   "In general, what is your opinion of the American government?"
+  
   Values:
-    1 - Don’t know/decline to answer 2 - Very favorable
-    3 - Somewhat favorable
-    4 - Neutral
-    5 - Somewhat unfavorable 6 - Very unfavorable
+  
+  1 - Don’t know/decline to answer  \
+  2 - Very favorable \
+  3 - Somewhat favorable \
+  4 - Neutral \
+  5 - Somewhat unfavorable  \
+  6 - Very unfavorable \
 
 
-5 - Question: American People (american_people)
+5 - Question: American People (american_people) \
   "In general, what is your opinion of the American people?"
+  
   Values:
-    1 - Don’t know/decline to answer
-    2 - Very favorable
-    3 - Somewhat favorable
-    4 - Neutral
-    5 - Somewhat unfavorable
-    6 - Very unfavorable
+  
+  1 - Don’t know/decline to answer \
+  2 - Very favorable \
+  3 - Somewhat favorable \
+  4 - Neutral \
+  5 - Somewhat unfavorable \
+  6 - Very unfavorable \
     
     
 
@@ -73,98 +96,111 @@ This subsection shows the available responses for the three questions that serve
 These variables represent either data coded automatically by our survey services or questions we asked the respondents. Note that almost all of these variables are treated as categorical/factor variables when estimating the models, and that the category numbers do not denote treatment as a continuous measure.
 
 
-6 - Question: Direct Contact with US Military (contact_pers)
+6 - Question: Direct Contact with US Military (contact_pers) \
 "Have you personally had direct contact with a member of the American military in (respondent’s country)?"
+  
   Values:
-    1 - Yes
-    2 - No
-    3 - Don’t know/Decline to answer
+  
+  1 - Yes \
+  2 - No \
+  3 - Don’t know/Decline to answer \
 
 
-7 - Question: Family Contact with US Military (contact_nonpers)
+7 - Question: Family Contact with US Military (contact_nonpers) \
 "Has a member of your family or close friend had direct contact with a member of the American military stationed in (respondent’s country)?"
+  
   Values:
-    1 - Yes
-    2 - No
-    3 - Don’t know/Decline to answer
+  
+  1 - Yes \
+  2 - No \
+  3 - Don’t know/Decline to answer \
 
 
-8 - Question: Economic benefit US Military (benefit_pers)
+8 - Question: Economic benefit US Military (benefit_pers) \
 "Have you personally received a direct economic benefit from the American military presence in (respondent’s country)? Examples include employment by the US military, employment by a con- tractor that does business with the US military, or ownership/employment at a business that frequently serves US military personnel."
+  
   Values:
-    1 - Yes
-    2 - No
-    3 - Don’t know/Decline to answer
+  
+  1 - Yes \
+  2 - No \
+  3 - Don’t know/Decline to answer \
 
 
-9 - Question: Family Economic Benefit US Military (benefit_nonpers)
+9 - Question: Family Economic Benefit US Military (benefit_nonpers) \
 "Has a member of your family or close friend received a direct economic benefit from the American military presence in (respondent’s country)? Examples include employment by the US military, employment by a contractor that does business with the US military, or ownership/employment at a business that frequently serves US military personnel."
   
   Values:
   
-    1 - Yes
-    2 - No
-    3 - Don’t know/Decline to answer
+  1 - Yes \
+  2 - No \
+  3 - Don’t know/Decline to answer \
 
-10 - Question: Gender
+10 - Question: Gender \
 What is your gender?
   
   Values:
   
-    1 - Male
-    2 - Female
-    3 - Non-binary
-    4 - None of the above
+  1 - Male \
+  2 - Female \
+  3 - Non-binary \
+  4 - None of the above \
 
 
-11 - Question: Minority
+11 - Question: Minority \
 Do you identify as a racial, ethnic, or religious minority?
+  
   Values:
-    1 - Yes
-    2 - No
-    3 - Decline to Answer
+  
+  1 - Yes \
+  2 - No \
+  3 - Decline to Answer \
     
-12 - Question: Education
+12 - Question: Education \
 How many years of formal education have you completed? Values: 0-99999
-*Note: Given a number of extreme outliers resulting from the open form/self-coding process we used in our surveys, we truncate the education variable at 25 years when we estimate our models to eliminate extreme outliers. This covers up to 9 years of graduate education.*
+*Note: Given a number of extreme outliers resulting from the open form/self-coding process we used in our surveys, we truncate the education variable in our analysis at 25 years when we estimate our models to eliminate extreme outliers. This covers up to 9 years of graduate education.*
 
-13 - Question: Age
+13 - Question: Age \
 What is your age? Values: 0-99999
 
-14 - Question: Income - Schmeidl (incomesm)
+14 - Question: Income - Schmeidl (incomesm) \
 What is your total household income during the past 12 months?
-This question had six response categories for each of the six countries, which is the following. All categories are combined as 1-6 in the data. We recommend combining categories 5 and 6 to repre- sent the upper income bracket to match the quintile distributions from the Qualtrics survey. 
-  Values:
-    1 - Bottom Bracket 
-    2 - 2nd Bracket
-    3 - 3rd Bracket
-    4 - 4th Bracket
-    5 - 5th Bracket 
-    6 - Top Bracket
+This question had six response categories for each of the six countries, which is the following. All categories are combined as 1-6 in the data. We recommend combining categories 5 and 6 to represent the upper income bracket to match the quintile distributions from the Qualtrics survey. 
 
-United Kingdom:
-1 - <£20,000
-2 - £20,000 - <£35,000 
-3 - £35,000 - <£50,000 
-4 - £50,000 - <£75,000 
-5 - £75,000 - <£100,000 
-6 - >£100,000
+  Values:
+
+  1 - Bottom Bracket  \
+  2 - 2nd Bracket \
+  3 - 3rd Bracket \
+  4 - 4th Bracket \
+  5 - 5th Bracket  \
+  6 - Top Bracket \
+
+United Kingdom: 
+
+1 - <£20,000 \
+2 - £20,000 - <£35,000  \
+3 - £35,000 - <£50,000  \
+4 - £50,000 - <£75,000  \
+5 - £75,000 - <£100,000  \
+6 - >£100,000 \
 
 Germany:
-1 - <20.000e
-2 - 20.000e - 29.999e 
-3 - 30.000e - 39.999e 
-4 - 40.000e - 49.999e 
-5 - 50.000e - 59.000e 
-6 - >60.000e
+
+1 - <20.000e \
+2 - 20.000e - 29.999e  \
+3 - 30.000e - 39.999e  \
+4 - 40.000e - 49.999e  \
+5 - 50.000e - 59.000e  \
+6 - >60.000e \
 
 Italy:
-1 - <20.000e
-2 - 20.000e - 29.999e 
-3 - 30.000e - 39.999e 
-4 - 40.000e - 49.999e 
-5 - 50.000e - 59.000e 
-6 - >60.000e
+
+1 - <20.000e \
+2 - 20.000e - 29.999e  \
+3 - 30.000e - 39.999e  \
+4 - 40.000e - 49.999e  \
+5 - 50.000e - 59.000e  \
+6 - >60.000e \
 
 Kuwait:
 1 - <3000 KWD
@@ -175,82 +211,110 @@ Kuwait:
 6 - >24000 KWD
 
 Japan:
-1 - <2 million yen
-2 - 2 million yen - less than 4 million yen
-3 - 4 million yen - less than 7 million yen
-4 - 7 million yen - less than 10 million yen 
-5 - 10 million yen - less than 15 million yen 
-6 - >15 million yen
+
+1 - <2 million yen \
+2 - 2 million yen - less than 4 million yen \
+3 - 4 million yen - less than 7 million yen \
+4 - 7 million yen - less than 10 million yen  \
+5 - 10 million yen - less than 15 million yen  \
+6 - >15 million yen \
 
 South Korea
-1 - <25 million KRW
-2 - 25 million - less than 35 million KRW 
-3 - 35 million - less than 45 million KRW 
-4 - 45 million - less than 60 million KRW 
-5 - 60 million - less than 80 million KRW 
-6 - >80 million KRW
 
-15 - Question: Religion
+1 - <25 million KRW \
+2 - 25 million - less than 35 million KRW  \
+3 - 35 million - less than 45 million KRW  \
+4 - 45 million - less than 60 million KRW  \
+5 - 60 million - less than 80 million KRW  \
+6 - >80 million KRW \
+
+15 - Question: Religion \
 What is your religion, if any?
+  
   Values:
-    1 - Christianity (Protestant) 2 - Catholicism
-    3 - Islam
-    4 - Agnostic/Atheist
-    5 - Hinduism 6 - Buddhism 7 - Shinto
-    8 - Judaism
-    9 - Mormonism 10 - Local religion
-
-11 - Other:
-12 - Decline to Answer
-
-
-16 - Question: Religion Other (religionother)
-Open text responses for the Other bracket option in the previous question. Value Range: Free-form text.
+  
+  1 - Christianity (Protestant) 2 - Catholicism \
+  3 - Islam \
+  4 - Agnostic/Atheist \
+  5 - Hinduism 6 - Buddhism 7 - Shinto \
+  8 - Judaism \
+  9 - Mormonism 10 - Local religion \
+  11 - Other: \
+  12 - Decline to Answer \
 
 
-17 - Question: Political Views (ideology)
+16 - Question: Religion Other (religionother) \
+Open text responses for the Other bracket option in the previous question. \
+Value Range: Free-form text.
+
+
+17 - Question: Political Views (ideology) \
 "People often talk about political issues and views in terms of a "left" and "right" spectrum. Using the following scale, where would you place yourself in terms of political views?"
+
   Values:
-    1 - 1 - LEFT 2-2
-    3-3
-    4-4
-    5-5
-    6-6
-    7-7
-    8-8
-    9-9
-    10 - 10 - RIGHT
+
+  1 - 1 - LEFT  \
+  2 - 2 \
+  3 - 3 \
+  4 - 4 \
+  5 - 5 \
+  6 - 6 \
+  7 - 7 \
+  8 - 8 \
+  9 - 9 \
+  10 - 10 - RIGHT \
 
 
-18 - Question: Favor Democracy (demgov)
+18 - Question: Favor Democracy (demgov) \
 "In general, how important is it to you that you live under a democratic government?"
+
   Values:
-    1 - Very important
-    2 - Somewhat important
-    3 - Neutral
-    4 - Not important
-    5 - Don’t know/decline to answer
+
+  1 - Very important \
+  2 - Somewhat important \
+  3 - Neutral \
+  4 - Not important \
+  5 - Don’t know/decline to answer \
 
 
-19 - Question: US Influence (Amount) (american_inf_1)
+19 - Question: US Influence (Amount) (american_inf_1) \
 " In your opinion, how much influence does the United States have in (respondent’s country)?"
+  
   Values:
-    1 - A lot
-    2 - Some
-    3 - A little
-    4 - None
-    5 - Don’t know/Decline to answer
+  
+  1 - A lot \
+  2 - Some \
+  3 - A little \
+  4 - None \
+  5 - Don’t know/Decline to answer \
 
 
-20 - Question: US Influence (Quality) (american_inf_2)
+20 - Question: US Influence (Quality) (american_inf_2) \
 "In your opinion, the influence that the United States has in (respondent’s country) is. . . "
+  
   Values:
-    1 - Very positive 
-    2 - Positive
-    3 - Neither Positive nor Negative 4 - Negative
-    5 - Very Negative
-    6 - Don’t know/Decline to answer
+  
+  1 - Very positive  \
+  2 - Positive \
+  3 - Neither Positive nor Negative 4 - Negative \
+  5 - Very Negative \
+  6 - Don’t know/Decline to answer \
 
+
+
+## Survey Coverage 
+
+Figure \@ref{fig:survey-coverage} shows the countries included in our analysis and help to illustrate the geographic coverage of our survey. Our initial rules for inclusion were based on a count of the countries that had an average of $\geq100$ U.S. military personnel per year deployed within their borders since 1990. This yielded a fairly large initial sample of 34 countries. From this list we further identified the countries that had average annual deployment levels $\geq$ 10,000 U.S. military personnel (the United Kingdom, Germany, Italy, South Korea, and Japan). We added Kuwait to this list as the value fell just below the 10,000 threshold. From there we proceeded to include other countries where the U.S. military presence was likely to be large enough to elicit a reaction from the public, thereby providing the variation we need the conduct our survey. We also focused on countries where the U.S. military had a historically notable presence, or cases that were of contemporary relevance. 
+
+For example, the average value for the Philippines is only 1,042 but the the long historical presence of U.S. military facilities in the Philippines, as well as that country's status as a former colony, makes it an attractive case. Alternatively,  Poland has an average score of 28 U.S. personnel since 1990, but with recent Russian aggression and the increase in U.S. personnel deployed to Poland, this is a case that is of great contemporary relevance for our analysis as it will help us to look at attitudes towards U.S. military personnel in a country that does not have a long-term history of hosting such deployments. 
+
+Other cases, like Belgium, Spain, the Netherlands, and Portugal allow us to assess variation in attitudes among countries that share a relatively similar geographic and political history, as well as countries who all belong to NATO. Further, countries like Portugal provide us with an opportunity to explore how variation in the type of U.S. military personnel affects attitudes, as it receives mostly Navy personnel as compared to the Army-heavy deployments in countries Germany. 
+
+Finally, there is a notable lack of countries represented in Africa and South America. This is for a couple of reasons. First, the only country in South America with a notable history of hosting U.S. military personnel is Panama. However, this is largely due to a brief spike in deployments following the U.S. invasion. In general, most Latin American countries have not played host to large long-term deployments in the way that countries in Europe and the Asia-Pacific region have. Those deployments that do occur in Latin America are generally short-term military exercises that tend to occur outside of the public's view. Though there is some limited interaction with the public during some of these deployments, it is not of the same frequency or intensity as in other cases. Members of our team have addressed the effects of these types of deployments in other work, but we have opted to exclude them from our current survey effort so as to focus on other cases with a history of hosting larger deployments over long periods of time. 
+
+However, we have conducted fieldwork in two Latin American countries as a part of this project---Panama and Peru. Panama is of clear historic importance given both the Canal and the U.S. invasion in 1989; Peru has hosted multiple rounds of military exercises conducted by the U.S. military in conjunction with other partner countries throughout Latin American on an annual basis. In each case we interviewed U.S. military personnel, local politicians, journalists, and policymakers in an effort to better understand the nature of the U.S. military's activities in these countries, as well as how the U.S. military relates to the host-state public. Given the smaller and more episodic nature of the deployments, we believe these interviews were a more effective approach for covering Latin America than the use of large-N surveys.
+
+Similarly, U.S. longer-term deployments in Africa are relatively new, but most are still relatively small in scale. None of the countries on our base list counting those that averaged $\geq$ 100 personnel per year were in Africa. Furthermore, those that are currently in Africa tend to be oriented towards military training and counter-terror operations. Unlike the larger deployments in Western Europe, these deployments are smaller and more focused in purpose, and do not tend to interact with the host-state population in the ways that deployments in other regions historically have.
 
 
 
@@ -259,8 +323,8 @@ Open text responses for the Other bracket option in the previous question. Value
 
 
 <div class="figure">
-<img src="02-contact-benefits_files/figure-html/unnamed-chunk-1-1.png" alt="Map of countries included in the survey. Color coding indicates which survey firm fielded the surveys in a given country." width="2800" />
-<p class="caption">(\#fig:unnamed-chunk-1)Map of countries included in the survey. Color coding indicates which survey firm fielded the surveys in a given country.</p>
+<img src="02-contact-benefits_files/figure-html/survey-map-1.png" alt="Map of countries included in the survey. Color coding indicates which survey firm fielded the surveys in a given country." width="2800" />
+<p class="caption">(\#fig:survey-map)Map of countries included in the survey. Color coding indicates which survey firm fielded the surveys in a given country.</p>
 </div>
 
 
