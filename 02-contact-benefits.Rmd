@@ -140,6 +140,12 @@ m.c.t1 <- readRDS(here::here("../Book/Output/Chapter-Contact/m.c.t1.rds"))
 m.c.g1 <- readRDS(here::here("../Book/Output/Chapter-Contact/m.c.g1.rds"))
 m.c.p1 <- readRDS(here::here("../Book/Output/Chapter-Contact/m.c.p1.rds"))
 
+m.c.t2 <- readRDS(here::here("../Book/Output/Chapter-Contact/m.c.t2.rds"))
+m.c.p2 <- readRDS(here::here("../Book/Output/Chapter-Contact/m.c.p2.rds"))
+m.c.g2 <- readRDS(here::here("../Book/Output/Chapter-Contact/m.c.g2.rds"))
+
+
+
 priors.t <- brms::prior_summary(m.c.t1) 
 priors.g <- brms::prior_summary(m.c.g1)
 priors.p <- brms::prior_summary(m.c.p1)
@@ -622,9 +628,11 @@ Fourth, we include a count of the number of U.S. military bases within each regi
 
 When running our models we use a standardized version of each of these variables. Specifically, this means that each value is divided by two standard deviations. While this can offer a number of benefits in interpreting variables (see @Gelman2008) this approach also provides computational advantages by rescaling the predictor variables and reducing the variability in their range.
 
+
+
 ### Further Discussions from Chapter 3
 
-Before moving on to the next section, Figure \ref{fig:priorcomparison} compares the prior probability distributions used in our models, which represent our beliefs about the relationship between contact and perceptions using only 2018 the data from our previous research, to the posterior distributions, which represent the our beliefs about the relationship between our key variables, given our full sample of data.[@Allen2020] This figure can help us understand how much our findings have changed as a result of including two additional years of surveys in our analysis. The larger points represent the prior values, and the smaller ones represent the posterior estimates from the models in this chapter. The different colors of the points correspond to the respondents' assessments of the US military, government, and people. The overall structure of the figure is similar to that of Figure \ref{fig:coefplot1}, but to streamline the presentation and focus on the most relevant quantities, we only include the values corresponding to the ``yes'' responses for the contact and benefit variables. 
+Before moving on to the next section, Figure \@ref{fig:priorcomparison} compares the prior probability distributions used in our models, which represent our beliefs about the relationship between contact and perceptions using only 2018 the data from our previous research, to the posterior distributions, which represent the our beliefs about the relationship between our key variables, given our full sample of data.[@Allen2020] This figure can help us understand how much our findings have changed as a result of including two additional years of surveys in our analysis. The larger points represent the prior values, and the smaller ones represent the posterior estimates from the models in this chapter. The different colors of the points correspond to the respondents' assessments of the US military, government, and people. The overall structure of the figure is similar to that of Figure \@ref{fig:coefplot1}, but to streamline the presentation and focus on the most relevant quantities, we only include the values corresponding to the ``yes'' responses for the contact and benefit variables. 
 
 ```{r priorcomparison, echo = FALSE, height = 8, width = 9}
 knitr::include_graphics("../Book/Figures/Chapter-Contact/figure-coefficient-prior-comparison.png")
@@ -632,10 +640,15 @@ knitr::include_graphics("../Book/Figures/Chapter-Contact/figure-coefficient-prio
 
 In general, the results of our current analysis largely reflect the results of the previous analysis. The priors and posteriors for the positive and negative responses are reasonably close to one another. When we focus only on the positive and negative response categories, we see that in roughly two-thirds of the coefficient estimates, the current analysis produces slightly smaller coefficient estimates than in our previous study. To put it differently, in many cases, the addition of the new data appears to have pulled the coefficients in towards 0, producing smaller absolute values of the estimates. In the remaining cases, the updated estimates are roughly equivalent to the prior values or larger. However, these differences are fairly small across the board.
 
-Where we see greater levels of divergence, it tends to be in the estimates of the "don't know/decline" response categories. Further, in these cases, the current analysis generally produces smaller coefficient values for this response category. A smaller coefficient indicates that, across the different contact\index{contact} and benefit questions, individuals who respond "yes" to these questions are less different from those who responded "no" when giving a "don't know/decline" response than our first analysis suggested.
+Where we see greater levels of divergence, it tends to be in the estimates of the "don't know/decline" response categories. Further, in these cases, the current analysis generally produces smaller coefficient values for this response category. A smaller coefficient indicates that, across the different contact and benefit questions, individuals who respond "yes" to these questions are less different from those who responded "no" when giving a "don't know/decline" response than our first analysis suggested.
+
+Our takeaway here is that the results of the updated models are fairly consistent with our earlier modeling efforts. However the addition of new data and the tendency towards slightly smaller estimates suggests that the estimates in our previous models may have 
+
 
 
 ### Prior Specification Tables
+
+We set the priors on the primary population-level coefficients using the coefficient values from the results of our earlier research on this subject [@Allen2020].
 
 ```{r prior-info-troops, warning=FALSE, echo=FALSE, message=FALSE}
 
@@ -694,18 +707,8 @@ check.p
 
 
 
-## Additional Tables
 
+## Model Tables
 
-```{=latex}
-%Population Effects
-\input{../Book/Tables/Chapter-Contact/model-contact-full.tex}
+Currently running into a problem getting the tables to compile correctly so I'm going to hold off on including those until I can work out where `modelsummary` is running into problems. 
 
-```
-
-
-```{=latex}
-% Varying Effects
-\input{../Book/Tables/Chapter-Contact/model-contact-varying.tex}
-
-```

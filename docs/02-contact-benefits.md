@@ -304,7 +304,7 @@ Value Range: Free-form text.
 
 ## Survey Coverage 
 
-Figure \@ref{fig:survey-coverage} shows the countries included in our analysis and help to illustrate the geographic coverage of our survey. Our initial rules for inclusion were based on a count of the countries that had an average of $\geq100$ U.S. military personnel per year deployed within their borders since 1990. This yielded a fairly large initial sample of 34 countries. From this list we further identified the countries that had average annual deployment levels $\geq$ 10,000 U.S. military personnel (the United Kingdom, Germany, Italy, South Korea, and Japan). We added Kuwait to this list as the value fell just below the 10,000 threshold. From there we proceeded to include other countries where the U.S. military presence was likely to be large enough to elicit a reaction from the public, thereby providing the variation we need the conduct our survey. We also focused on countries where the U.S. military had a historically notable presence, or cases that were of contemporary relevance. 
+Figure \@ref{fig:survey-map} shows the countries included in our analysis and help to illustrate the geographic coverage of our survey. Our initial rules for inclusion were based on a count of the countries that had an average of $\geq100$ U.S. military personnel per year deployed within their borders since 1990. This yielded a fairly large initial sample of 34 countries. From this list we further identified the countries that had average annual deployment levels $\geq$ 10,000 U.S. military personnel (the United Kingdoacm, Germany, Italy, South Korea, and Japan). We added Kuwait to this list as the value fell just below the 10,000 threshold. From there we proceeded to include other countries where the U.S. military presence was likely to be large enough to elicit a reaction from the public, thereby providing the variation we need the conduct our survey. We also focused on countries where the U.S. military had a historically notable presence, or cases that were of contemporary relevance. 
 
 For example, the average value for the Philippines is only 1,042 but the the long historical presence of U.S. military facilities in the Philippines, as well as that country's status as a former colony, makes it an attractive case. Alternatively,  Poland has an average score of 28 U.S. personnel since 1990, but with recent Russian aggression and the increase in U.S. personnel deployed to Poland, this is a case that is of great contemporary relevance for our analysis as it will help us to look at attitudes towards U.S. military personnel in a country that does not have a long-term history of hosting such deployments. 
 
@@ -318,10 +318,6 @@ Similarly, U.S. longer-term deployments in Africa are relatively new, but most a
 
 
 
-
-## Descriptive Information
-
-
 <div class="figure">
 <img src="02-contact-benefits_files/figure-html/survey-map-1.png" alt="Map of countries included in the survey. Color coding indicates which survey firm fielded the surveys in a given country." width="2800" />
 <p class="caption">(\#fig:survey-map)Map of countries included in the survey. Color coding indicates which survey firm fielded the surveys in a given country.</p>
@@ -329,7 +325,8 @@ Similarly, U.S. longer-term deployments in Africa are relatively new, but most a
 
 
 
-Summary statistics detailing breakdown of views.
+## Additional Descriptive Information
+
 
 One detail that we wanted to convey in the book was just how out of step views of the US government often are compared with views of US military personnel and the American people. Figure \@ref(fig:gov-gap) shows these differences by showing the percent of people in each country who responded with a favorable or unfavorable view of the group listed on the X axis. 
 
@@ -475,16 +472,19 @@ Fourth, we include a count of the number of U.S. military bases within each regi
 
 When running our models we use a standardized version of each of these variables. Specifically, this means that each value is divided by two standard deviations. While this can offer a number of benefits in interpreting variables (see @Gelman2008) this approach also provides computational advantages by rescaling the predictor variables and reducing the variability in their range.
 
+
+
 ### Further Discussions from Chapter 3
 
-Before moving on to the next section, Figure \ref{fig:priorcomparison} compares the prior probability distributions used in our models, which represent our beliefs about the relationship between contact and perceptions using only 2018 the data from our previous research, to the posterior distributions, which represent the our beliefs about the relationship between our key variables, given our full sample of data.[@Allen2020] This figure can help us understand how much our findings have changed as a result of including two additional years of surveys in our analysis. The larger points represent the prior values, and the smaller ones represent the posterior estimates from the models in this chapter. The different colors of the points correspond to the respondents' assessments of the US military, government, and people. The overall structure of the figure is similar to that of Figure \ref{fig:coefplot1}, but to streamline the presentation and focus on the most relevant quantities, we only include the values corresponding to the ``yes'' responses for the contact and benefit variables. 
+Before moving on to the next section, Figure \@ref{fig:priorcomparison} compares the prior probability distributions used in our models, which represent our beliefs about the relationship between contact and perceptions using only 2018 the data from our previous research, to the posterior distributions, which represent the our beliefs about the relationship between our key variables, given our full sample of data.[@Allen2020] This figure can help us understand how much our findings have changed as a result of including two additional years of surveys in our analysis. The larger points represent the prior values, and the smaller ones represent the posterior estimates from the models in this chapter. The different colors of the points correspond to the respondents' assessments of the US military, government, and people. The overall structure of the figure is similar to that of Figure \@ref{fig:coefplot1}, but to streamline the presentation and focus on the most relevant quantities, we only include the values corresponding to the ``yes'' responses for the contact and benefit variables. 
 
 <img src="../Book/Figures/Chapter-Contact/figure-coefficient-prior-comparison.png" width="324" />
 
 In general, the results of our current analysis largely reflect the results of the previous analysis. The priors and posteriors for the positive and negative responses are reasonably close to one another. When we focus only on the positive and negative response categories, we see that in roughly two-thirds of the coefficient estimates, the current analysis produces slightly smaller coefficient estimates than in our previous study. To put it differently, in many cases, the addition of the new data appears to have pulled the coefficients in towards 0, producing smaller absolute values of the estimates. In the remaining cases, the updated estimates are roughly equivalent to the prior values or larger. However, these differences are fairly small across the board.
 
-Where we see greater levels of divergence, it tends to be in the estimates of the "don't know/decline" response categories. Further, in these cases, the current analysis generally produces smaller coefficient values for this response category. A smaller coefficient indicates that, across the different contact\index{contact} and benefit questions, individuals who respond "yes" to these questions are less different from those who responded "no" when giving a "don't know/decline" response than our first analysis suggested.
+Where we see greater levels of divergence, it tends to be in the estimates of the "don't know/decline" response categories. Further, in these cases, the current analysis generally produces smaller coefficient values for this response category. A smaller coefficient indicates that, across the different contact and benefit questions, individuals who respond "yes" to these questions are less different from those who responded "no" when giving a "don't know/decline" response than our first analysis suggested.
 
+Our takeaway here is that the results of the updated models are fairly consistent with our earlier modeling efforts. However the addition of new data and the tendency towards slightly smaller estimates suggests that the estimates in our previous models may have 
 
 ### Prior Specification Tables
 
@@ -6796,4 +6796,9 @@ Where we see greater levels of divergence, it tends to be in the estimates of th
 </div>
 
 
+
+
+## Model Tables
+
+Currently running into a problem getting the tables to compile correctly so I'm going to hold off on including those until I can work out where `modelsummary` is running into problems. 
 

@@ -1,4 +1,4 @@
-# US Military Deployments and Minority Communities
+# US Military Deployments and Minority Communities {#minority-chapter}
 
 This chapter provides supplementary information related to Chapter 4 of the book, focusing on how US military deployments interact with and are viewed by minority communities. 
 
@@ -167,6 +167,14 @@ priors.t <- brms::prior_summary(m.t1)
 priors.g <- brms::prior_summary(m.g1)
 priors.p <- brms::prior_summary(m.p1)
 
+priors.t2 <- brms::prior_summary(m.t2) 
+priors.g2 <- brms::prior_summary(m.g2)
+priors.p2 <- brms::prior_summary(m.p2)
+
+priors.t2.japan <- brms::prior_summary(m.t2.japan) 
+priors.g2.japan <- brms::prior_summary(m.g2.japan)
+priors.p2.japan <- brms::prior_summary(m.p2.japan)
+
 ```
 
 
@@ -175,10 +183,11 @@ priors.p <- brms::prior_summary(m.p1)
 ```{r minority-description, echo=FALSE, warning=FALSE, message=FALSE}
 
 # Minorities as a percent of the sample by year
+# # Note that I had to edit this code chunk and changed the `length(X1)` line relative tot he original code because the original code was spitting back "1" for the observation count for 2020 for all countries. No idea why.
 minperc <- o.data %>% 
   group_by(country, year) %>% 
   mutate(minority.yes = ifelse(minority == "Yes", 1, 0),
-         groupobs = n_distinct(X1)) %>% 
+         groupobs = length(X1)) %>% 
   dplyr::summarise(minority = sum(minority.yes, na.rm = TRUE),
             obs = mean(groupobs, na.rm = TRUE)) %>% 
   mutate(min.per = minority/obs) %>% 
@@ -194,6 +203,178 @@ ggplot(minperc, aes(y = factor(year), x = min.per, color = country)) +
        y = "Year",
        color = "Country",
        title = "Self-identified minority group members as percent of country sample")
+
+```
+
+
+### Prior Specification Tables for Minority Models
+
+```{r prior-info-crime-troops, warning=FALSE, echo=FALSE, message=FALSE}
+
+kableExtra::kable(priors.t, caption = "Priors specifications for bivariate Troops contact models.", digits = 3) |> 
+  kableExtra::kable_styling(font_size = 11) |> 
+  kableExtra::scroll_box(height = "400px", width = "100%")
+
+```
+
+```{r prior-info-crime-gov, warning=FALSE, echo=FALSE, message=FALSE}
+
+kableExtra::kable(priors.g, caption = "Priors specifications for bivariate Government contact models.", digits = 3) |> 
+  kableExtra::kable_styling(font_size = 11) |> 
+  kableExtra::scroll_box(height = "400px", width = "100%")
+
+```
+
+```{r prior-info-crime-people, warning=FALSE, echo=FALSE, message=FALSE}
+
+kableExtra::kable(priors.p, caption = "Priors specifications for bivariate People contact models.", digits = 3) |> 
+  kableExtra::kable_styling(font_size = 11) |> 
+  kableExtra::scroll_box(height = "400px", width = "100%")
+
+```
+
+```{r prior-info-crime-troops-2, warning=FALSE, echo=FALSE, message=FALSE}
+
+kableExtra::kable(priors.t2, caption = "Priors specifications for full Troops contact models.", digits = 3) |> 
+  kableExtra::kable_styling(font_size = 11) |> 
+  kableExtra::scroll_box(height = "400px", width = "100%")
+
+```
+
+```{r prior-info-crime-gov-2, warning=FALSE, echo=FALSE, message=FALSE}
+
+kableExtra::kable(priors.g2, caption = "Priors specifications for full Government contact models.", digits = 3) |> 
+  kableExtra::kable_styling(font_size = 11) |> 
+  kableExtra::scroll_box(height = "400px", width = "100%")
+
+```
+
+```{r prior-info-crime-people-2, warning=FALSE, echo=FALSE, message=FALSE}
+
+kableExtra::kable(priors.p2, caption = "Priors specifications for full People contact models.", digits = 3) |> 
+  kableExtra::kable_styling(font_size = 11) |> 
+  kableExtra::scroll_box(height = "400px", width = "100%")
+
+```
+
+```{r prior-info-crime-troops-japan, warning=FALSE, echo=FALSE, message=FALSE}
+
+kableExtra::kable(priors.t2.japan, caption = "Priors specifications for full Japan Troops contact models.", digits = 3) |> 
+  kableExtra::kable_styling(font_size = 11) |> 
+  kableExtra::scroll_box(height = "400px", width = "100%")
+
+```
+
+```{r prior-info-crime-gov-japan, warning=FALSE, echo=FALSE, message=FALSE}
+
+kableExtra::kable(priors.g2.japan, caption = "Priors specifications for full Japan Government contact models.", digits = 3) |> 
+  kableExtra::kable_styling(font_size = 11) |> 
+  kableExtra::scroll_box(height = "400px", width = "100%")
+
+```
+
+```{r prior-info-crime-people-japan, warning=FALSE, echo=FALSE, message=FALSE}
+
+kableExtra::kable(priors.p2.japan, caption = "Priors specifications for full Japan People contact models.", digits = 3) |> 
+  kableExtra::kable_styling(font_size = 11) |> 
+  kableExtra::scroll_box(height = "400px", width = "100%")
+
+```
+
+
+
+
+### Posterior Predictive Check Figures
+
+```{r posterior-check-crime-troops, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for bivariate contact models and attitudes towards the US troops outcome variable."}
+check.t <- brms::pp_check(m.t1, nsamples = 100, type = "bars_grouped", group = "country") +
+  theme_flynn() +
+  labs(title = "Posterior Predictive Check for Troops Model")
+
+check.t
+
+```
+
+```{r posterior-check-crime-gov, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for bivariate contact models and attitudes towards the US government outcome variable."}
+check.g <- brms::pp_check(m.g1, nsamples = 100, type = "bars_grouped", group = "country") +
+  theme_flynn() +
+  labs(title = "Posterior Predictive Check for Government Model")
+
+check.g
+
+```
+
+
+```{r posterior-check-crime-people, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for bivaraite contact models and attitudes towards the US people outcome variable."}
+check.p <- brms::pp_check(m.p1, nsamples = 100, type = "bars_grouped", group = "country") +
+  theme_flynn() +
+  labs(title = "Posterior Predictive Check for People Model")
+
+check.p
+
+```
+
+
+
+
+```{r posterior-check-crime-troops-2, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for full contact models and attitudes towards the US troops outcome variable."}
+check.t2 <- brms::pp_check(m.t2, nsamples = 100, type = "bars_grouped", group = "country") +
+  theme_flynn() +
+  labs(title = "Posterior Predictive Check for Troops Model")
+
+check.t2
+
+```
+
+```{r posterior-check-crime-gov-2, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for full contact models and attitudes towards the US government outcome variable."}
+check.g2 <- brms::pp_check(m.g2, nsamples = 100, type = "bars_grouped", group = "country") +
+  theme_flynn() +
+  labs(title = "Posterior Predictive Check for Government Model")
+
+check.g2
+
+```
+
+
+```{r posterior-check-crime-people-2, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for full contact models and attitudes towards the US people outcome variable."}
+check.p2 <- brms::pp_check(m.p2, nsamples = 100, type = "bars_grouped", group = "country") +
+  theme_flynn() +
+  labs(title = "Posterior Predictive Check for People Model")
+
+check.p2
+
+```
+
+
+
+
+
+
+```{r posterior-check-crime-troops-2-japan, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for contact models and attitudes towards the US troops outcome variable. Models look at Japan only and contain varying effects for minority status across provinces."}
+check.t2.japan <- brms::pp_check(m.t2.japan, nsamples = 100, type = "bars_grouped", group = "province") +
+  theme_flynn() +
+  labs(title = "Posterior Predictive Check for Troops Model")
+
+check.t2.japan
+
+```
+
+```{r posterior-check-crime-gov-2-japan, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for contact models and attitudes towards the US government outcome variable. Models look at Japan only and contain varying effects for minority status across provinces."}
+check.g2.japan <- brms::pp_check(m.g2.japan, nsamples = 100, type = "bars_grouped", group = "province") +
+  theme_flynn() +
+  labs(title = "Posterior Predictive Check for Government Model")
+
+check.g2.japan
+
+```
+
+
+```{r posterior-check-crime-people-2-japan, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for contact models and attitudes towards the US people outcome variable. Models look at Japan only and contain varying effects for minority status across provinces."}
+check.p2.japan <- brms::pp_check(m.p2.japan, nsamples = 100, type = "bars_grouped", group = "province") +
+  theme_flynn() +
+  labs(title = "Posterior Predictive Check for People Model")
+
+check.p2.japan
 
 ```
 
