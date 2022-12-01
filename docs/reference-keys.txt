@@ -54,3 +54,5 @@ fig:posterior-check-crime-people-2-japan
 prior-specification-tables-for-minority-models
 posterior-predictive-check-figures-2
 minority-chapter
+tab:individual-level-summary-table
+roc-plot
