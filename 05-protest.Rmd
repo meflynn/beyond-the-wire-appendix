@@ -52,7 +52,7 @@ library(remotes)
 # Test
 library(modelsummary)
 
-knitr::opts_chunk$set(comment = '', dpi = 400)
+knitr::opts_chunk$set(comment = '', dpi = 400, fig.align = "center", out.width = "75%")
 
 sysfonts::font_add_google("Oswald", family = "oswald")
 showtext::showtext_auto()
@@ -249,15 +249,6 @@ Part of the decision calculus in choosing a threshold is judging the utility of 
 Looking at Table \@ref(tab:percent-correct-targeted), we can see that lower classification thresholds generate relatively comparable figures for specificity and overall correct predictions across all models while yielding much better performance on the sensitivity metric. Using a lower probability threshold for determining which observations fall into the "Yes" category can thus improve overall predictive accuracy.
 
 
-```{r protest-roc-plot, echo=FALSE}
-
-knitr::include_graphics(here::here("../Book/Figures/Chapter-Protests/fig-roc-plot.png"))
-
-```
-
-
-
-
 ```{r percent-correct-targeted, echo=FALSE, eval=FALSE}
 
 # Create loop to generate ROC curve for different p values
@@ -340,13 +331,20 @@ op.predict.table.targeted <- kable(results.df.targeted, "latex", align = "lrrrrr
 ```
 
 
-Table \@ref{tab:percent-correct-targeted} shows the models' predictive accuracy when we use 0.10 as the probability threshold for predicting individuals' protest\index{protest} experience. In general, the overall percent of observations correctly predicted remains fairly high but has declined slightly. We also see the false positive rate has increased, which we should expect from having a much lower threshold. More importantly, the sensitivity score has increased substantially across each model. The minimum here is approximately 41\%, with a high of 77\%. In other words, using a lower probability threshold, our final model is correctly classifying three-quarters of cases where individuals report having participated in anti-US protest\index{protest} events. Again, this increase does come with a cost. The lower overall rate of correct predictions results from the slight decrease in the correct predictions of ``No'' responses. The increased false-positive rate also reflects this. 
+Table \@ref{tab:percent-correct-targeted} shows the models' predictive accuracy when we use 0.10 as the probability threshold for predicting individuals' protest experience. In general, the overall percent of observations correctly predicted remains fairly high but has declined slightly. We also see the false positive rate has increased, which we should expect from having a much lower threshold. More importantly, the sensitivity score has increased substantially across each model. The minimum here is approximately 41\%, with a high of 77\%. In other words, using a lower probability threshold, our final model is correctly classifying three-quarters of cases where individuals report having participated in anti-US protest events. Again, this increase does come with a cost. The lower overall rate of correct predictions results from the slight decrease in the correct predictions of ``No'' responses. The increased false-positive rate also reflects this. 
+
+
+```{r protest-roc-plot, message=FALSE, echo=FALSE, fig.cap="Receiver operating characteristic curve plot for individual-level protest models."}
+
+knitr::include_graphics(here::here("../Book/Figures/Chapter-Protests/fig-roc-plot.png"))
+
+```
 
 
 From the curves presented in Figure \@ref{fig:protest-roc-plot} we can see that there is indeed substantial variation in model performance when we account for the full range of probability thresholds. Ideally, we would want to see a model's curve spike up to 100\% immediately on the left side of the figure, but none of the models come close to this ideal type. The Intercept Only model performs the worst of the five, as we expect. Again, however, we see substantial improvements as we add demographic variables, and then demographic, attitudinal, and experiential variables. Ss this figure helps to make clearer, the relative performance of the three more complex models---including the one allowing for varying coefficient estimates---is nearly identical, with a very slight edge to the varying coefficient model. Ultimately, all of the models perform better than a simple random assignment mechanism. Still, some are clearly doing a better job of accurately classifying cases of protest involvement while sacrificing less in generating a larger share of false positives.
 
 
-```{r fig-pvalue-comparison}
+```{r fig-pvalue-comparison, message=FALSE, echo=FALSE, fig.cap="Figuring showing the percent predicted correctly, sensitivity, and specificity across different prediction categorization probability thresholds."}
 knitr::include_graphics(here::here("../Book/Figures/Chapter-Protests/fig-pvalue-comparison.png"))
 ```
 
@@ -393,7 +391,8 @@ Once we have calculated the structural weights using this method, we can now est
 
 The 
 
-```{r, protest-dag,  echo = FALSE, dpi=400, warning=FALSE, message=FALSE}
+```{r, protest-dag,  echo = FALSE, dpi=400, warning=FALSE, message=FALSE, fig.cap="Simplified Directed Acyclic Graph (DAG) illustrating the theoretical relationships between the treatment, confounders, and outcome variables."}
+
 library(tidygraph)
 library(latex2exp)
 library(dagitty)
@@ -521,7 +520,7 @@ dagbase2 %>%
 ```
 
 
-```{r, echo=FALSE, warning=FALSE}
+```{r, echo=FALSE, warning=FALSE, fig.cap="Simplified Directed Acyclic Graph (DAG) illustrating the theoretical relationships between the treatment, confounders, and outcome variables."}
 # Prettier DAG for public consumption in text
 
 dag.pretty <- dagitty(' dag{
