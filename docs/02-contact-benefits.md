@@ -486,7 +486,15 @@ Where we see greater levels of divergence, it tends to be in the estimates of th
 
 Our takeaway here is that the results of the updated models are fairly consistent with our earlier modeling efforts. However the addition of new data and the tendency towards slightly smaller estimates suggests that the estimates in our previous models may have 
 
+
+### Additional Note
+
+The code for these models is available on [Michael Flynn's GitHub repository](https://github.com/meflynn/troops-book) for the book. I would also direct readers' to [Jordan Nafa's GitHub repository](https://github.com/ajnafa) housing replication information for the 2018 article that preceded the book. Our initial APSR models took about 30 hours per model (times three models). We estimate several more models in the book, and we were able to obtain some efficiency gains and reduce run times by streamlining model specifications and using better and/or informed priors [see @Allen2020]. Jordan's code is **much** more efficient than the code we used to estimate our public opinion models, and he has **greatly** reduced model run times through a number of modifications to the basic code. For now I've just linked to Jordan's general GitHub repo, but I'll narrow the link to the specific repo for the replication code when I get it. For now, just know that there are ways to significantly improve upon the basic code we used.
+
+
 ### Prior Specification Tables
+
+We set the priors on the primary population-level coefficients using the coefficient values from the results of our earlier research on this subject [@Allen2020].
 
 <div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; overflow-x: scroll; width:100%; "><table class="table" style="font-size: 11px; margin-left: auto; margin-right: auto;">
 <caption style="font-size: initial !important;">(\#tab:prior-info-troops)Priors specifications for Troops contact models.</caption>

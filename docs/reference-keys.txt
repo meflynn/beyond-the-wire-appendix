@@ -60,3 +60,6 @@ fig:protest-roc-plot
 fig:fig-pvalue-comparison
 fig:protest-dag
 fig:unnamed-chunk-1
+fig:protest-dag-simple
+eq:structuralweights
+additional-note
