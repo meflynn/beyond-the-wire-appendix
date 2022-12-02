@@ -56,3 +56,7 @@ posterior-predictive-check-figures-2
 minority-chapter
 tab:individual-level-summary-table
 roc-plot
+fig:protest-roc-plot
+fig:fig-pvalue-comparison
+fig:protest-dag
+fig:unnamed-chunk-1
