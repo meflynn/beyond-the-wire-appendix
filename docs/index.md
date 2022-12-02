@@ -1,7 +1,7 @@
 --- 
 title: "Supplementary Appendix for Beyond the Wire: US Military Deployments and Host Country Public Opinion"
 author: "Michael. A. Allen, Michael E. Flynn, Carla Martinez Machain, and Andrew Stravers"
-date: "2022-11-15"
+date: "2022-12-02"
 site: bookdown::bookdown_site
 documentclass: book
 cover-image:

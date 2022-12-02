@@ -319,7 +319,7 @@ Similarly, U.S. longer-term deployments in Africa are relatively new, but most a
 
 
 <div class="figure">
-<img src="02-contact-benefits_files/figure-html/survey-map-1.png" alt="Map of countries included in the survey. Color coding indicates which survey firm fielded the surveys in a given country." width="2800" />
+<img src="02-contact-benefits_files/figure-html/survey-map-1.png" alt="Map of countries included in the survey. Color coding indicates which survey firm fielded the surveys in a given country." width="75%" />
 <p class="caption">(\#fig:survey-map)Map of countries included in the survey. Color coding indicates which survey firm fielded the surveys in a given country.</p>
 </div>
 
@@ -331,7 +331,7 @@ Similarly, U.S. longer-term deployments in Africa are relatively new, but most a
 One detail that we wanted to convey in the book was just how out of step views of the US government often are compared with views of US military personnel and the American people. Figure \@ref(fig:gov-gap) shows these differences by showing the percent of people in each country who responded with a favorable or unfavorable view of the group listed on the X axis. 
 
 <div class="figure">
-<img src="02-contact-benefits_files/figure-html/gov-gap-1.png" alt="Favorable and Unfavorable views of US actors. Categories aggregated to favorable and unfavorable based on a response of 'Somewhat' or 'Very'." width="2800" />
+<img src="02-contact-benefits_files/figure-html/gov-gap-1.png" alt="Favorable and Unfavorable views of US actors. Categories aggregated to favorable and unfavorable based on a response of 'Somewhat' or 'Very'." width="75%" />
 <p class="caption">(\#fig:gov-gap)Favorable and Unfavorable views of US actors. Categories aggregated to favorable and unfavorable based on a response of 'Somewhat' or 'Very'.</p>
 </div>
 
@@ -478,7 +478,7 @@ When running our models we use a standardized version of each of these variables
 
 Before moving on to the next section, Figure \@ref{fig:priorcomparison} compares the prior probability distributions used in our models, which represent our beliefs about the relationship between contact and perceptions using only 2018 the data from our previous research, to the posterior distributions, which represent the our beliefs about the relationship between our key variables, given our full sample of data.[@Allen2020] This figure can help us understand how much our findings have changed as a result of including two additional years of surveys in our analysis. The larger points represent the prior values, and the smaller ones represent the posterior estimates from the models in this chapter. The different colors of the points correspond to the respondents' assessments of the US military, government, and people. The overall structure of the figure is similar to that of Figure \@ref{fig:coefplot1}, but to streamline the presentation and focus on the most relevant quantities, we only include the values corresponding to the ``yes'' responses for the contact and benefit variables. 
 
-<img src="../Book/Figures/Chapter-Contact/figure-coefficient-prior-comparison.png" width="324" />
+<img src="../Book/Figures/Chapter-Contact/figure-coefficient-prior-comparison.png" width="75%" />
 
 In general, the results of our current analysis largely reflect the results of the previous analysis. The priors and posteriors for the positive and negative responses are reasonably close to one another. When we focus only on the positive and negative response categories, we see that in roughly two-thirds of the coefficient estimates, the current analysis produces slightly smaller coefficient estimates than in our previous study. To put it differently, in many cases, the addition of the new data appears to have pulled the coefficients in towards 0, producing smaller absolute values of the estimates. In the remaining cases, the updated estimates are roughly equivalent to the prior values or larger. However, these differences are fairly small across the board.
 
@@ -489,7 +489,7 @@ Our takeaway here is that the results of the updated models are fairly consisten
 
 ### Additional Note
 
-The code for these models is available on [Michael Flynn's GitHub repository](https://github.com/meflynn/troops-book) for the book. I would also direct readers' to [Jordan Nafa's GitHub repository](https://github.com/ajnafa) housing replication information for the 2018 article that preceded the book. Our initial APSR models took about 30 hours per model (times three models). We estimate several more models in the book, and we were able to obtain some efficiency gains and reduce run times by streamlining model specifications and using better and/or informed priors [see @Allen2020]. Jordan's code is **much** more efficient than the code we used to estimate our public opinion models, and he has **greatly** reduced model run times through a number of modifications to the basic code. For now I've just linked to Jordan's general GitHub repo, but I'll narrow the link to the specific repo for the replication code when I get it. For now, just know that there are ways to significantly improve upon the basic code we used.
+The code for these models is available on [Michael Flynn's GitHub repository](https://github.com/meflynn/troops-book) for the book. I would also direct readers' to [Jordan Nafa's GitHub repository](https://github.com/ajnafa) housing replication information for the 2018 article that preceded the book. Our initial APSR models took about 30 hours per model (times three models). We estimate several more models in the book, and we were able to obtain some efficiency gains and reduce run times by streamlining model specifications and using better and/or informed priors [see @Allen2020]. Jordan's code is **much** more efficient than the code we used to estimate our public opinion models, and he has **greatly** reduced model run times through a number of modifications to the basic code. I think he was able to get the models to run in about 2 hours per model. For now I've just linked to Jordan's general GitHub repo, but I'll narrow the link to the specific repo for the replication code when I get it. For now, just know that there are ways to significantly improve upon the basic code we used.
 
 
 ### Prior Specification Tables
@@ -6788,18 +6788,18 @@ We set the priors on the primary population-level coefficients using the coeffic
 ### Posterior Predictive Check Figures
 
 <div class="figure">
-<img src="02-contact-benefits_files/figure-html/posterior-check-troops-1.png" alt="Posterior predictive checks for contact models and attitudes towards the US troops outcome variable." width="2800" />
+<img src="02-contact-benefits_files/figure-html/posterior-check-troops-1.png" alt="Posterior predictive checks for contact models and attitudes towards the US troops outcome variable." width="75%" />
 <p class="caption">(\#fig:posterior-check-troops)Posterior predictive checks for contact models and attitudes towards the US troops outcome variable.</p>
 </div>
 
 <div class="figure">
-<img src="02-contact-benefits_files/figure-html/posterior-check-gov-1.png" alt="Posterior predictive checks for contact models and attitudes towards the US government outcome variable." width="2800" />
+<img src="02-contact-benefits_files/figure-html/posterior-check-gov-1.png" alt="Posterior predictive checks for contact models and attitudes towards the US government outcome variable." width="75%" />
 <p class="caption">(\#fig:posterior-check-gov)Posterior predictive checks for contact models and attitudes towards the US government outcome variable.</p>
 </div>
 
 
 <div class="figure">
-<img src="02-contact-benefits_files/figure-html/posterior-check-people-1.png" alt="Posterior predictive checks for contact models and attitudes towards the US people outcome variable." width="2800" />
+<img src="02-contact-benefits_files/figure-html/posterior-check-people-1.png" alt="Posterior predictive checks for contact models and attitudes towards the US people outcome variable." width="75%" />
 <p class="caption">(\#fig:posterior-check-people)Posterior predictive checks for contact models and attitudes towards the US people outcome variable.</p>
 </div>
 
