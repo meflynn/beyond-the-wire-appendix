@@ -32,7 +32,6 @@ fig:protest-roc-plot
 fig:fig-pvalue-comparison
 fig:protest-dag
 fig:protest-dag-simple
-eq:structuralweights
 introduction
 contact-benefits
 survey-information
