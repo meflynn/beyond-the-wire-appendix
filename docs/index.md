@@ -6,13 +6,13 @@ site: bookdown::bookdown_site
 documentclass: book
 bibliography: [one.bib]
 link-citations: true
-url: https://meflynn.github.io/beyond-the-wire-appendix
+url: https://meflynn.github.io/beyond-the-wire-appendix/
 cover-image: "cover-image.jpg"
 description: |
   This bookdown project contains additional supplementary information for the contents of our book, Beyond the Wire: US Military Deployments and Host Country Public Opinion. The materials contained within include additional information on surveys, tables for the models presented in the book, additional figures, etc.
 github-repo: meflynn/beyond-the-wire-appendix
 ---
-
+ 
 # Summary {-}
 
 This bookdown project contains additional supplementary information for the contents of our book, Beyond the Wire: US Military Deployments and the Diplomacy of Defense. The materials contained within include additional information on surveys, tables for the models presented in the book, additional figures, code for figures and tables, etc.

@@ -214,7 +214,7 @@ Individuals with more education appear to be more likely to express both positiv
 
 Regarding gender, individuals identifying as female tend to be less likely to express positive views than those who identify as male. Those individuals identifying as non-binary also appear less likely to express positive views of US actors, and are more likely to express negative views of US troops and the US government, with some indication of a lower probability of expressing negative views of the American people.
 
-Finally, when comparing across income quintiles, we find some interesting patterns. First, the baseline category here is the lowest income grouping---the 0--20\% quintile. Compared to this group, there is some indication that higher income groups tend to have slightly less favorable views of US military personnel, but these differences appear very small. We find a similar pattern when looking at views of the US government\index{government}, where only the highest income group shows a slightly positive coefficient value. When looking at views of the US people, groups above the 40\% income group appear to have a slightly more positive probability of expressing positive views than the bottom two income categories. We find somewhat similar patterns when looking at negative views. However, we do see larger differences in the probability of expressing negative views among the highest income groups when looking at views of the US government. Though not depicted in this figure, a notable feature of these results is that income appears to correlate quite strongly with a lower probability of respondents saying "Don't Know/Decline to Answer" when asked about any of the three US groups. Only 2.7\% of the highest income groups across all 14 countries replied "Don't Know/Decline to Answer" when asked about the US military presence in their country. On the other hand, 7.7\% of respondents in the lowest income group gave the same response. Like education, income appears to correlate more strongly with more informed opinions instead of clearly lining up with more positive or more negative attitudes. 
+Finally, when comparing across income quintiles, we find some interesting patterns. First, the baseline category here is the lowest income grouping---the 0--20\% quintile. Compared to this group, there is some indication that higher income groups tend to have slightly less favorable views of US military personnel, but these differences appear very small. We find a similar pattern when looking at views of the US government, where only the highest income group shows a slightly positive coefficient value. When looking at views of the US people, groups above the 40\% income group appear to have a slightly more positive probability of expressing positive views than the bottom two income categories. We find somewhat similar patterns when looking at negative views. However, we do see larger differences in the probability of expressing negative views among the highest income groups when looking at views of the US government. Though not depicted in this figure, a notable feature of these results is that income appears to correlate quite strongly with a lower probability of respondents saying "Don't Know/Decline to Answer" when asked about any of the three US groups. Only 2.7\% of the highest income groups across all 14 countries replied "Don't Know/Decline to Answer" when asked about the US military presence in their country. On the other hand, 7.7\% of respondents in the lowest income group gave the same response. Like education, income appears to correlate more strongly with more informed opinions instead of clearly lining up with more positive or more negative attitudes. 
 
 
 
@@ -298,7 +298,7 @@ kableExtra::kable(priors.p2.japan, caption = "Priors specifications for full Jap
 ### Posterior Predictive Check Figures
 
 ```{r posterior-check-crime-troops, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for bivariate contact models and attitudes towards the US troops outcome variable."}
-check.t <- brms::pp_check(m.t1, nsamples = 100, type = "bars_grouped", group = "country") +
+check.t <- brms::pp_check(m.t1, ndraws = 100, type = "bars_grouped", group = "country") +
   theme_flynn() +
   labs(title = "Posterior Predictive Check for Troops Model")
 
@@ -307,7 +307,7 @@ check.t
 ```
 
 ```{r posterior-check-crime-gov, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for bivariate contact models and attitudes towards the US government outcome variable."}
-check.g <- brms::pp_check(m.g1, nsamples = 100, type = "bars_grouped", group = "country") +
+check.g <- brms::pp_check(m.g1, ndraws = 100, type = "bars_grouped", group = "country") +
   theme_flynn() +
   labs(title = "Posterior Predictive Check for Government Model")
 
@@ -317,7 +317,7 @@ check.g
 
 
 ```{r posterior-check-crime-people, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for bivaraite contact models and attitudes towards the US people outcome variable."}
-check.p <- brms::pp_check(m.p1, nsamples = 100, type = "bars_grouped", group = "country") +
+check.p <- brms::pp_check(m.p1, ndraws = 100, type = "bars_grouped", group = "country") +
   theme_flynn() +
   labs(title = "Posterior Predictive Check for People Model")
 
@@ -329,7 +329,7 @@ check.p
 
 
 ```{r posterior-check-crime-troops-2, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for full contact models and attitudes towards the US troops outcome variable."}
-check.t2 <- brms::pp_check(m.t2, nsamples = 100, type = "bars_grouped", group = "country") +
+check.t2 <- brms::pp_check(m.t2, ndraws = 100, type = "bars_grouped", group = "country") +
   theme_flynn() +
   labs(title = "Posterior Predictive Check for Troops Model")
 
@@ -338,7 +338,7 @@ check.t2
 ```
 
 ```{r posterior-check-crime-gov-2, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for full contact models and attitudes towards the US government outcome variable."}
-check.g2 <- brms::pp_check(m.g2, nsamples = 100, type = "bars_grouped", group = "country") +
+check.g2 <- brms::pp_check(m.g2, ndraws = 100, type = "bars_grouped", group = "country") +
   theme_flynn() +
   labs(title = "Posterior Predictive Check for Government Model")
 
@@ -348,7 +348,7 @@ check.g2
 
 
 ```{r posterior-check-crime-people-2, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for full contact models and attitudes towards the US people outcome variable."}
-check.p2 <- brms::pp_check(m.p2, nsamples = 100, type = "bars_grouped", group = "country") +
+check.p2 <- brms::pp_check(m.p2, ndraws = 100, type = "bars_grouped", group = "country") +
   theme_flynn() +
   labs(title = "Posterior Predictive Check for People Model")
 
@@ -362,7 +362,7 @@ check.p2
 
 
 ```{r posterior-check-crime-troops-2-japan, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for contact models and attitudes towards the US troops outcome variable. Models look at Japan only and contain varying effects for minority status across provinces."}
-check.t2.japan <- brms::pp_check(m.t2.japan, nsamples = 100, type = "bars_grouped", group = "province") +
+check.t2.japan <- brms::pp_check(m.t2.japan, ndraws = 100, type = "bars_grouped", group = "province") +
   theme_flynn() +
   labs(title = "Posterior Predictive Check for Troops Model")
 
@@ -371,7 +371,7 @@ check.t2.japan
 ```
 
 ```{r posterior-check-crime-gov-2-japan, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for contact models and attitudes towards the US government outcome variable. Models look at Japan only and contain varying effects for minority status across provinces."}
-check.g2.japan <- brms::pp_check(m.g2.japan, nsamples = 100, type = "bars_grouped", group = "province") +
+check.g2.japan <- brms::pp_check(m.g2.japan, ndraws = 100, type = "bars_grouped", group = "province") +
   theme_flynn() +
   labs(title = "Posterior Predictive Check for Government Model")
 
@@ -381,7 +381,7 @@ check.g2.japan
 
 
 ```{r posterior-check-crime-people-2-japan, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for contact models and attitudes towards the US people outcome variable. Models look at Japan only and contain varying effects for minority status across provinces."}
-check.p2.japan <- brms::pp_check(m.p2.japan, nsamples = 100, type = "bars_grouped", group = "province") +
+check.p2.japan <- brms::pp_check(m.p2.japan, ndraws = 100, type = "bars_grouped", group = "province") +
   theme_flynn() +
   labs(title = "Posterior Predictive Check for People Model")
 

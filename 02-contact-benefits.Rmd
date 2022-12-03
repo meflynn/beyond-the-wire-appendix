@@ -682,7 +682,7 @@ kableExtra::kable(priors.p, caption = "Priors specifications for People contact 
 ### Posterior Predictive Check Figures
 
 ```{r posterior-check-troops, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for contact models and attitudes towards the US troops outcome variable."}
-check.t <- brms::pp_check(m.c.t1, nsamples = 100, type = "bars_grouped", group = "country") +
+check.t <- brms::pp_check(m.c.t1, ndraws = 100, type = "bars_grouped", group = "country") +
   theme_flynn() +
   labs(title = "Posterior Predictive Check for Troops Model")
 
@@ -691,7 +691,7 @@ check.t
 ```
 
 ```{r posterior-check-gov, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for contact models and attitudes towards the US government outcome variable."}
-check.g <- brms::pp_check(m.c.g1, nsamples = 100, type = "bars_grouped", group = "country") +
+check.g <- brms::pp_check(m.c.g1, ndraws = 100, type = "bars_grouped", group = "country") +
   theme_flynn() +
   labs(title = "Posterior Predictive Check for Government Model")
 
@@ -701,7 +701,7 @@ check.g
 
 
 ```{r posterior-check-people, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Posterior predictive checks for contact models and attitudes towards the US people outcome variable."}
-check.p <- brms::pp_check(m.c.p1, nsamples = 100, type = "bars_grouped", group = "country") +
+check.p <- brms::pp_check(m.c.p1, ndraws = 100, type = "bars_grouped", group = "country") +
   theme_flynn() +
   labs(title = "Posterior Predictive Check for People Model")
 
