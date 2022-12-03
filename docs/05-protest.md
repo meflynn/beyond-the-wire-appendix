@@ -212,11 +212,9 @@ These diagrams serve as the starting point for our marginal structural models. B
 The first step in the model building process is to estimate a series of structural weights for each observation for the final regression model to resolve this. We calculate these weights using the formula found Equation \@ref{eq:structuralweights}.
 
 
-\begin{equation} 
-
-\hat{SW}_{it} = \prod_{t=1}^{N} \frac{{{\hat{Pr}(X_{it} | X_{it-1}, \displaystyle \sum_{k = 2}^{N} x_{t-k}  , Z_{i})}}}{\hat{Pr}(X_{it} | X_{it-1} ,  \displaystyle \sum_{k = 2}^{N} x_{t-k}, \gamma_{it} ,Z_{i})}   
+\begin{equation}
+\hat{SW}_{it} = \prod_{t=1}^{N} \frac{{{\hat{Pr}(X_{it} | X_{it-1}, \displaystyle \sum_{k = 2}^{N} x_{t-k}  , Z_{i})}}}{\hat{Pr}(X_{it} | X_{it-1} ,  \displaystyle \sum_{k = 2}^{N} x_{t-k}, \gamma_{it} ,Z_{i})}
 (\#eq:structuralweights)
-
 \end{equation}
 
 More simply, the weights shown in Equation \@ref(eq:structuralweights) are a form of propensity score that we can use to re-balance the observations in our data. This is simply a variant of the inverse probability of treatment (IPTW) weighting method.^[For more information on estimating propensity scores see: @ImbensRubin2015 Chapter 13] Normally, estimating propensity scores is a relatively straightforward process as it is commonly used to estimate scores in data where the treatment, and often the outcome, are binary (meaning 0 or 1) variables. The fact that our treatment (the number of US troops present in a country) is continuous, meaning that it can, in theory, take on any integer value that is 0 or greater, complicates this process slightly.^[For a fuller discussion of estimating the inverse probability of treatment weights for MSMs, estimating these weights for continuous treatment variables, or estimating weights for a continuous treatment in the presence of multilevel/grouped data using multilevel models see the following works: @ColeHernan2008;@vanderwalGeskus2011;@Naimietal2014;@SchulerChuCoffman2016] 
