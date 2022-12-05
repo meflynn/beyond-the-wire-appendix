@@ -56,70 +56,6 @@
 <link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
 
 
-<style type="text/css">
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { color: #008000; } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { color: #008000; font-weight: bold; } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-</style>
 
 <style type="text/css">
 /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
@@ -767,6 +703,11 @@ United Kingdom
 <p>Third, we include measures of the number of U.S. military personnel deployed to the host country in a given year. To generate these values we use data obtained from the <code>{troopdata}</code> software package for R <span class="citation">(<a href="#ref-allenflynnmartinezmachain2022" role="doc-biblioref">Michael A. Allen, Flynn, and Machain 2021</a>)</span>. These data originally come from the Defense Manpower Data Center and were initially compiled by <span class="citation">Kane (<a href="#ref-Kane2004" role="doc-biblioref">2004</a>)</span>.</p>
 <p>Fourth, we include a count of the number of U.S. military bases within each region of the host country. We generate these variables using data from David Vine [Vine2015] contained in the <code>{troopdata}</code> package. We used the <code>{raster}</code> software package in R <span class="citation">(<a href="#ref-hijmans2022" role="doc-biblioref">Hijmans 2022</a>)</span> to generate shapefiles using the Database of Global Administrative Areas (GADM) <span class="citation">(<a href="#ref-GADM2021" role="doc-biblioref">Global Administrative Areas 2021</a>)</span>. We then use the <code>{sp}</code> software package to check for overlap between base locations and administrative regions. We then take the sum of the base locations that fall within each administrative area.</p>
 <p>When running our models we use a standardized version of each of these variables. Specifically, this means that each value is divided by two standard deviations. While this can offer a number of benefits in interpreting variables (see <span class="citation">Gelman (<a href="#ref-Gelman2008" role="doc-biblioref">n.d.</a>)</span>) this approach also provides computational advantages by rescaling the predictor variables and reducing the variability in their range.</p>
+<p>When dealing with continuous variables we generally try to rescale the variables to improve model run times. Following <span class="citation">Gelman (<a href="#ref-Gelman2008" role="doc-biblioref">n.d.</a>)</span> we rescale these variables as follows.</p>
+<p><span class="math display">\[\begin{equation}
+x_{rescaled} = \frac{x - \bar{x} }{2 \times \sigma}
+\end{equation}\]</span></p>
+<p>This method simply subtracts the mean of <span class="math inline">\(x\)</span> from the observed value of <span class="math inline">\(x\)</span> and then divides the resulting difference by two times the standard deviation of <span class="math inline">\(x\)</span>. This approach has the benefit of helping the Stan models to converge more quickly as compared to using un-transformed regressors with “large” values.</p>
 </div>
 <div id="further-discussions-from-chapter-3" class="section level3 hasAnchor" number="2.4.2">
 <h3><span class="header-section-number">2.4.2</span> Further Discussions from Chapter 3<a href="contact-benefits.html#further-discussions-from-chapter-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
