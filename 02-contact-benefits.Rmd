@@ -628,6 +628,14 @@ Fourth, we include a count of the number of U.S. military bases within each regi
 
 When running our models we use a standardized version of each of these variables. Specifically, this means that each value is divided by two standard deviations. While this can offer a number of benefits in interpreting variables (see @Gelman2008) this approach also provides computational advantages by rescaling the predictor variables and reducing the variability in their range.
 
+When dealing with continuous variables we generally try to rescale the variables to improve model run times. Following @Gelman2008 we rescale these variables as follows.
+
+\begin{equation}
+x_{rescaled} = \frac{x - \bar{x} }{2 \times \sigma}
+\end{equation}
+
+This method simply subtracts the mean of $x$ from the observed value of $x$ and then divides the resulting difference by two times the standard deviation of $x$. This approach has the benefit of helping the Stan models to converge more quickly as compared to using un-transformed regressors with "large" values. 
+
 
 
 ### Further Discussions from Chapter 3
