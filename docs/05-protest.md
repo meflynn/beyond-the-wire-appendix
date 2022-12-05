@@ -213,7 +213,7 @@ The first step in the model building process is to estimate a series of structur
 
 
 \begin{equation}
-\hat{SW}_{it}=\prod_{t=1}^{N}\frac{{{\hat{Pr}(X_{it}|X_{it-1},\displaystyle\sum_{k=2}^{N}x_{t-k},Z_{i})}}}{\hat{Pr}(X_{it}|X_{it-1},\displaystyle\sum_{k=2}^{N}x_{t-k},\gamma_{it},Z_{i})}
+\hat{SW}_{it}=\prod_{t=1}^{N}\frac{\hat{Pr}(X_{it}|X_{it-1},\displaystyle\sum_{k=2}^{N}x_{t-k},Z_{i})}{\hat{Pr}(X_{it}|X_{it-1},\displaystyle\sum_{k=2}^{N}x_{t-k},\gamma_{it},Z_{i})}
 \end{equation}
 
 
